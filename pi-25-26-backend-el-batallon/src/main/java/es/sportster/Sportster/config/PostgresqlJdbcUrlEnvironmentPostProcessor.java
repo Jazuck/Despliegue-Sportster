@@ -36,7 +36,21 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         String raw = resolveRawJdbcOrPostgresUrl(environment);
         if (!StringUtils.hasText(raw)) {
+            if (isRenderRuntime()) {
+                throw new IllegalStateException(
+                        "Render: no hay URL de Postgres. Añade en el servicio web la variable SPRING_DATASOURCE_URL "
+                                + "o DATABASE_URL (postgresql://… o jdbc:postgresql://…). Si la BD no está enlazada "
+                                + "al servicio (fromDatabase), copia la connection string del panel de Postgres.");
+            }
             return;
+        }
+        if (isRenderRuntime()
+                && looksLikeLocalDatasource(raw)
+                && !hasExplicitSpringOrDatabaseUrl(environment)) {
+            throw new IllegalStateException(
+                    "Render: no está definida SPRING_DATASOURCE_URL ni DATABASE_URL, y la URL resuelta apunta a "
+                            + "localhost (valor por defecto de application.properties). Enlaza la base de datos al "
+                            + "servicio o define una de esas variables con la connection string del panel de Postgres.");
         }
         String trimmed = raw.trim();
         String jdbc = normalizeJdbcUrl(trimmed);
@@ -46,12 +60,15 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
         if (embedded != null) {
             String url = ensureSslModeForRenderPublicHost(embedded.urlWithoutUserInfo());
             map.put(KEY_URL, url);
+            map.put("spring.jpa.properties.jakarta.persistence.jdbc.url", url);
             map.put(KEY_USER, embedded.username());
             map.put(KEY_PASS, embedded.password());
         } else {
             String url = ensureSslModeForRenderPublicHost(jdbc);
-            if (!url.equals(trimmed)) {
+            // Siempre fijar URL JDBC canónica si el valor crudo no era jdbc:postgresql://… (p. ej. postgresql://).
+            if (!url.equals(trimmed) || !trimmed.startsWith("jdbc:postgresql://")) {
                 map.put(KEY_URL, url);
+                map.put("spring.jpa.properties.jakarta.persistence.jdbc.url", url);
             }
         }
         if (!map.isEmpty()) {
@@ -64,19 +81,59 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
         }
     }
 
+    /** Render inyecta {@code RENDER=true} en runtime. */
+    static boolean isRenderRuntime() {
+        return "true".equalsIgnoreCase(System.getenv("RENDER"));
+    }
+
+    static boolean hasExplicitSpringOrDatabaseUrl(ConfigurableEnvironment environment) {
+        return StringUtils.hasText(firstNonBlank(environment.getProperty(ENV_SPRING_URL), getenvTrimmed(ENV_SPRING_URL)))
+                || StringUtils.hasText(
+                        firstNonBlank(environment.getProperty(ENV_DATABASE_URL), getenvTrimmed(ENV_DATABASE_URL)));
+    }
+
+    static boolean looksLikeLocalDatasource(String raw) {
+        if (raw == null) {
+            return false;
+        }
+        String lower = raw.toLowerCase();
+        return lower.contains("localhost") || lower.contains("127.0.0.1");
+    }
+
     /**
      * Render y otras plataformas suelen exponer {@code DATABASE_URL}; el blueprint usa {@code SPRING_DATASOURCE_URL}.
      */
     static String resolveRawJdbcOrPostgresUrl(ConfigurableEnvironment environment) {
-        String v = environment.getProperty(ENV_SPRING_URL);
-        if (StringUtils.hasText(v)) {
-            return v.trim();
+        String v = firstNonBlank(environment.getProperty(ENV_SPRING_URL), getenvTrimmed(ENV_SPRING_URL));
+        if (v != null) {
+            return v;
         }
-        v = environment.getProperty(ENV_DATABASE_URL);
-        if (StringUtils.hasText(v)) {
-            return v.trim();
+        v = firstNonBlank(environment.getProperty(ENV_DATABASE_URL), getenvTrimmed(ENV_DATABASE_URL));
+        if (v != null) {
+            return v;
         }
         v = environment.getProperty(KEY_URL);
+        if (StringUtils.hasText(v)) {
+            String t = v.trim();
+            if (!t.contains("${")) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    static String firstNonBlank(String a, String b) {
+        if (StringUtils.hasText(a)) {
+            return a.trim();
+        }
+        if (StringUtils.hasText(b)) {
+            return b.trim();
+        }
+        return null;
+    }
+
+    static String getenvTrimmed(String key) {
+        String v = System.getenv(key);
         return StringUtils.hasText(v) ? v.trim() : null;
     }
 

@@ -51,4 +51,33 @@ class PostgresqlJdbcUrlEnvironmentPostProcessorTest {
         assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.resolveRawJdbcOrPostgresUrl(env))
                 .isEqualTo("postgresql://a:b@db/app");
     }
+
+    @Test
+    void resolveRaw_ignoresUnresolvedPlaceholderInSpringDatasourceUrl() {
+        var env = new MockEnvironment();
+        env.setProperty("spring.datasource.url", "${MISSING:}");
+        assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.resolveRawJdbcOrPostgresUrl(env)).isNull();
+    }
+
+    @Test
+    void firstNonBlank_prefersFirst() {
+        assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.firstNonBlank(" a ", null)).isEqualTo("a");
+        assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.firstNonBlank(null, " b ")).isEqualTo("b");
+        assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.firstNonBlank("", "  ")).isNull();
+    }
+
+    @Test
+    void looksLikeLocalDatasource_detectsLoopback() {
+        assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.looksLikeLocalDatasource(
+                "jdbc:postgresql://localhost:5432/sportster")).isTrue();
+        assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.looksLikeLocalDatasource(
+                "jdbc:postgresql://dpg-abc.oregon-postgres.render.com:5432/sportster")).isFalse();
+    }
+
+    @Test
+    void hasExplicitSpringOrDatabaseUrl_trueWhenSpringSet() {
+        var env = new MockEnvironment();
+        env.setProperty("SPRING_DATASOURCE_URL", "postgresql://a:b@h/db");
+        assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.hasExplicitSpringOrDatabaseUrl(env)).isTrue();
+    }
 }
