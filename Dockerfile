@@ -1,14 +1,23 @@
-# API Spring Boot — build desde la raíz del monorepo (Render Docker sin Root Directory en subcarpeta).
-# Requiere que el clone incluya pi-25-26-backend-el-batallon (submódulo sincronizado).
+# API Spring Boot — contexto = raíz del monorepo Jazuck/Despliegue-Sportster.
+# Render: Root Directory VACÍO, runtime Docker, Dockerfile path "Dockerfile".
+#
+# La fuente se descarga del repo del API (público). Así no depende de que el
+# submódulo se copie bien al contexto de Docker (evita "Dockerfile 2B" / carpeta vacía).
+# Si SomosDeWeb/pi-25-26-backend-el-batallon es privado, hazlo público o vuelve a COPY local.
 
 FROM eclipse-temurin:21-jdk-jammy AS build
 WORKDIR /app
-COPY pi-25-26-backend-el-batallon/pom.xml .
-COPY pi-25-26-backend-el-batallon/mvnw .
-COPY pi-25-26-backend-el-batallon/.mvn .mvn
-RUN chmod +x mvnw
-COPY pi-25-26-backend-el-batallon/src src
-RUN ./mvnw -B -q -DskipTests package
+
+ARG BACKEND_TARBALL_URL=https://github.com/SomosDeWeb/pi-25-26-backend-el-batallon/archive/refs/heads/main.tar.gz
+ADD ${BACKEND_TARBALL_URL} /tmp/backend.tgz
+
+RUN mkdir /tmp/x \
+  && tar -xzf /tmp/backend.tgz -C /tmp/x \
+  && d="$(find /tmp/x -mindepth 1 -maxdepth 1 -type d | head -1)" \
+  && test -n "$d" \
+  && cp -a "${d}/." /app/ \
+  && chmod +x mvnw \
+  && ./mvnw -B -q -DskipTests package
 
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
