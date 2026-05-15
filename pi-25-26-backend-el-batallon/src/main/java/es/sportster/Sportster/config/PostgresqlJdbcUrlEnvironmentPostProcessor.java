@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
+import org.springframework.util.StringUtils;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -12,11 +13,14 @@ import java.util.Map;
 
 /**
  * Normaliza URLs JDBC de Postgres (Render, etc.): {@code postgresql://}, falta de {@code //} en {@code jdbc:postgresql:},
- * y separa {@code usuario:contraseña} embebidos en la URL hacia {@code spring.datasource.username/password}
- * (Spring no debe quedar con usuario por defecto {@code postgres} chocando con la URL).
+ * separa credenciales embebidas en la URL y fuerza {@code sslmode=require} fuera de localhost (Render).
+ * <p>
+ * Lee {@code SPRING_DATASOURCE_URL} explícitamente: en algunos arranques {@code spring.datasource.url} aún
+ * refleja el default de {@code application.properties} antes de enlazar bien el entorno.
  */
 public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
+    private static final String ENV_URL = "SPRING_DATASOURCE_URL";
     private static final String KEY_URL = "spring.datasource.url";
     private static final String KEY_USER = "spring.datasource.username";
     private static final String KEY_PASS = "spring.datasource.password";
@@ -24,8 +28,8 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        String raw = environment.getProperty(KEY_URL);
-        if (raw == null) {
+        String raw = resolveRawJdbcOrPostgresUrl(environment);
+        if (!StringUtils.hasText(raw)) {
             return;
         }
         String trimmed = raw.trim();
@@ -34,15 +38,31 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
         EmbeddedCredentials embedded = extractEmbeddedCredentials(jdbc);
         Map<String, Object> map = new LinkedHashMap<>();
         if (embedded != null) {
-            map.put(KEY_URL, embedded.urlWithoutUserInfo());
+            String url = ensureSslModeForRemotePostgres(embedded.urlWithoutUserInfo());
+            map.put(KEY_URL, url);
             map.put(KEY_USER, embedded.username());
             map.put(KEY_PASS, embedded.password());
-        } else if (!jdbc.equals(trimmed)) {
-            map.put(KEY_URL, jdbc);
+        } else {
+            String url = ensureSslModeForRemotePostgres(jdbc);
+            if (!url.equals(trimmed)) {
+                map.put(KEY_URL, url);
+            }
         }
         if (!map.isEmpty()) {
             environment.getPropertySources().addFirst(new MapPropertySource(PS_NAME, map));
         }
+    }
+
+    /**
+     * Prioriza la variable de entorno que Render inyecta en el runtime Docker.
+     */
+    static String resolveRawJdbcOrPostgresUrl(ConfigurableEnvironment environment) {
+        String v = environment.getProperty(ENV_URL);
+        if (StringUtils.hasText(v)) {
+            return v.trim();
+        }
+        v = environment.getProperty(KEY_URL);
+        return StringUtils.hasText(v) ? v.trim() : null;
     }
 
     static String normalizeJdbcUrl(String url) {
@@ -56,6 +76,38 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
             return "jdbc:postgresql://" + url.substring("jdbc:postgresql:".length());
         }
         return url;
+    }
+
+    /**
+     * Postgres gestionado (Render, etc.) suele exigir TLS; en local no añadimos parámetros.
+     */
+    static String ensureSslModeForRemotePostgres(String jdbcUrlWithoutUser) {
+        if (jdbcUrlWithoutUser == null || !StringUtils.hasText(jdbcUrlWithoutUser)) {
+            return jdbcUrlWithoutUser;
+        }
+        String lower = jdbcUrlWithoutUser.toLowerCase();
+        if (!lower.startsWith("jdbc:postgresql://")) {
+            return jdbcUrlWithoutUser;
+        }
+        if (lower.contains("localhost") || lower.contains("127.0.0.1")) {
+            return jdbcUrlWithoutUser;
+        }
+        if (lower.contains("sslmode=")) {
+            return jdbcUrlWithoutUser;
+        }
+        int q = jdbcUrlWithoutUser.indexOf('?');
+        if (q < 0) {
+            return jdbcUrlWithoutUser + "?sslmode=require";
+        }
+        String base = jdbcUrlWithoutUser.substring(0, q);
+        String query = jdbcUrlWithoutUser.substring(q + 1);
+        if (query.endsWith("&")) {
+            return base + "?" + query + "sslmode=require";
+        }
+        if (query.isEmpty()) {
+            return base + "?sslmode=require";
+        }
+        return base + "?" + query + "&sslmode=require";
     }
 
     /**
@@ -92,5 +144,5 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
         return URLDecoder.decode(segment, StandardCharsets.UTF_8);
     }
 
-    private record EmbeddedCredentials(String urlWithoutUserInfo, String username, String password) {}
+    record EmbeddedCredentials(String urlWithoutUserInfo, String username, String password) {}
 }
