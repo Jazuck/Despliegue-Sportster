@@ -1,8 +1,51 @@
-# Web con raíz en backend: package.json puente delega en el frontend Vite.
+# Blueprint Render — Sportster (API Spring Boot en Docker + React + Postgres).
+#
+# Uso:
+# 1) Dashboard Render → New → Blueprint → conecta este repo.
+# 2) Si YA tienes una instancia Postgres con datos, borra el bloque `databases` y en el servicio
+#    `sportster-api` quita el envVar `SPRING_DATASOURCE_URL` fromDatabase; añade en el dashboard
+#    la URL interna o externa (postgresql:// o jdbc) + usuario y contraseña del panel de Postgres.
+# 3) Tras el primer deploy, si cambias los `name` de los servicios, actualiza en el dashboard:
+#    - VITE_API_ORIGIN del front = https://<nombre-api>.onrender.com (sin /api/v1)
+#    - APP_CORS_ALLOWED_ORIGINS del API = https://<nombre-web>.onrender.com,http://localhost:5173,...
+#
+# Nombres por defecto → URLs típicas: https://sportster-api.onrender.com y https://sportster-web.onrender.com
+
+databases:
+  - name: sportster-postgres
+    databaseName: sportster
+    user: sportster_user
+    region: oregon
+    plan: free
+
 services:
+  # --- API (Dockerfile en la raíz del repo) ---
   - type: web
-    name: despliegue-sportster
+    name: sportster-api
+    runtime: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: render
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: sportster-postgres
+          property: connectionString
+      - key: APP_CORS_ALLOWED_ORIGINS
+        value: "https://sportster-web.onrender.com,http://localhost:5173,http://127.0.0.1:5173"
+
+  # --- Frontend (Vite build + serve) ---
+  - type: web
+    name: sportster-web
     runtime: node
-    rootDir: pi-25-26-backend-el-batallon
-    buildCommand: yarn
+    region: oregon
+    plan: free
+    rootDir: pi-25-26-frontend-el-batallon
+    buildCommand: yarn install --frozen-lockfile && yarn build
     startCommand: yarn start
+    envVars:
+      - key: VITE_API_ORIGIN
+        value: https://sportster-api.onrender.com

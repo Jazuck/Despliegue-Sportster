@@ -1,0 +1,486 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-05-15T00:00:00.000Z",
+  "__export_source": "sportster-insomnia-collection",
+  "resources": [
+    {
+      "_id": "wrk_sportster",
+      "type": "workspace",
+      "parentId": null,
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "Sportster API",
+      "description": "Batería de pruebas para local y Render. Ajusta base_url en el entorno. Tras Login, copia el token JSON a jwt_token o usa Bearer manual."
+    },
+    {
+      "_id": "env_local",
+      "type": "environment",
+      "parentId": "wrk_sportster",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "Local",
+      "data": {
+        "base_url": "http://localhost:8080",
+        "jwt_token": ""
+      },
+      "dataPropertyOrder": { "&": ["base_url", "jwt_token"] },
+      "color": "#7d69cb",
+      "isPrivate": false,
+      "metaSortKey": 1740000000000
+    },
+    {
+      "_id": "env_render",
+      "type": "environment",
+      "parentId": "wrk_sportster",
+      "modified": 1740000000001,
+      "created": 1740000000001,
+      "name": "Render (ejemplo)",
+      "data": {
+        "base_url": "https://TU-API.onrender.com",
+        "jwt_token": ""
+      },
+      "dataPropertyOrder": { "&": ["base_url", "jwt_token"] },
+      "color": "#4caf50",
+      "isPrivate": false,
+      "metaSortKey": 1740000000001
+    },
+    {
+      "_id": "fld_smoke",
+      "type": "request_group",
+      "parentId": "wrk_sportster",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "0 Smoke / raíz",
+      "description": "Comprueba que el servidor responde.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1000
+    },
+    {
+      "_id": "req_root",
+      "type": "Request",
+      "parentId": "fld_smoke",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "GET / (health)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/",
+      "headers": [],
+      "parameters": [],
+      "body": {},
+      "authentication": {},
+      "metaSortKey": -1000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "fld_public",
+      "type": "request_group",
+      "parentId": "wrk_sportster",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "1 Público (como Home.jsx)",
+      "description": "Mismas rutas que el front sin login. Si GET deportes falla aquí, el fallo no es CORS del navegador.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -900
+    },
+    {
+      "_id": "req_deportes",
+      "type": "Request",
+      "parentId": "fld_public",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "GET /api/v1/deportes",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/deportes",
+      "headers": [],
+      "parameters": [],
+      "body": {},
+      "authentication": {},
+      "metaSortKey": -900,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "req_deportes_todos",
+      "type": "Request",
+      "parentId": "fld_public",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "GET /api/v1/deportes?todos=true (sin admin → solo públicos)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/deportes",
+      "headers": [],
+      "parameters": [
+        {
+          "id": "pair_todos",
+          "name": "todos",
+          "value": "true",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "body": {},
+      "authentication": {},
+      "metaSortKey": -899,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "req_deporte_id",
+      "type": "Request",
+      "parentId": "fld_public",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "GET /api/v1/deportes/1",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/deportes/1",
+      "headers": [],
+      "parameters": [],
+      "body": {},
+      "authentication": {},
+      "metaSortKey": -898,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "req_modalidades",
+      "type": "Request",
+      "parentId": "fld_public",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "GET /api/v1/modalidades",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/modalidades",
+      "headers": [],
+      "parameters": [],
+      "body": {},
+      "authentication": {},
+      "metaSortKey": -897,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "req_modalidades_deporte",
+      "type": "Request",
+      "parentId": "fld_public",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "GET /api/v1/modalidades/deporte/1",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/modalidades/deporte/1",
+      "headers": [],
+      "parameters": [],
+      "body": {},
+      "authentication": {},
+      "metaSortKey": -896,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "req_ranking",
+      "type": "Request",
+      "parentId": "fld_public",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "GET /api/v1/marcas/ranking",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/marcas/ranking",
+      "headers": [],
+      "parameters": [
+        {
+          "id": "pair_mid",
+          "name": "modalidadId",
+          "value": "1",
+          "description": "Cambia si no existe en tu BD",
+          "disabled": false
+        }
+      ],
+      "body": {},
+      "authentication": {},
+      "metaSortKey": -895,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "fld_cors",
+      "type": "request_group",
+      "parentId": "wrk_sportster",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "2 CORS (preflight)",
+      "description": "Simula lo que hace el navegador antes de un GET con cabeceras extra. Si 1 Público OK pero el front falla, revisa app.cors.allowed-origins en el backend.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -800
+    },
+    {
+      "_id": "req_options_deportes",
+      "type": "Request",
+      "parentId": "fld_cors",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "OPTIONS /api/v1/deportes (Origin Vite)",
+      "method": "OPTIONS",
+      "url": "{{ _.base_url }}/api/v1/deportes",
+      "headers": [
+        {
+          "id": "pair_o1",
+          "name": "Origin",
+          "value": "http://localhost:5173",
+          "description": ""
+        },
+        {
+          "id": "pair_o2",
+          "name": "Access-Control-Request-Method",
+          "value": "GET",
+          "description": ""
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {},
+      "metaSortKey": -800,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "fld_auth",
+      "type": "request_group",
+      "parentId": "wrk_sportster",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "3 Auth",
+      "description": "Login devuelve JSON con token. Pégalo en el entorno jwt_token para las carpetas 4 y 5.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -700
+    },
+    {
+      "_id": "req_login",
+      "type": "Request",
+      "parentId": "fld_auth",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "POST /api/v1/auth/login (demo)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/auth/login",
+      "headers": [
+        {
+          "id": "pair_ct",
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": ""
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"user@sportster.com\",\n  \"password\": \"123456\"\n}"
+      },
+      "authentication": {},
+      "metaSortKey": -700,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "req_login_admin",
+      "type": "Request",
+      "parentId": "fld_auth",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "POST /api/v1/auth/login (admin)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/auth/login",
+      "headers": [
+        {
+          "id": "pair_ct2",
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": ""
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"admin@sportster.com\",\n  \"password\": \"123456\"\n}"
+      },
+      "authentication": {},
+      "metaSortKey": -699,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "req_register",
+      "type": "Request",
+      "parentId": "fld_auth",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "POST /api/v1/auth/register (email único)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/auth/register",
+      "headers": [
+        {
+          "id": "pair_ct3",
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": ""
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Insomnia Test\",\n  \"email\": \"insomnia.test@example.com\",\n  \"phone\": \"600123456\",\n  \"password\": \"123456\",\n  \"confirmPassword\": \"123456\"\n}"
+      },
+      "authentication": {},
+      "metaSortKey": -698,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "fld_user",
+      "type": "request_group",
+      "parentId": "wrk_sportster",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "4 Con JWT (usuario)",
+      "description": "Rellena jwt_token en el entorno (valor del campo token del login).",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -600
+    },
+    {
+      "_id": "req_perfil",
+      "type": "Request",
+      "parentId": "fld_user",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "GET /api/v1/perfil",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/perfil",
+      "headers": [],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}",
+        "disabled": false
+      },
+      "metaSortKey": -600,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "req_marca_post",
+      "type": "Request",
+      "parentId": "fld_user",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "POST /api/v1/marcas",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/marcas",
+      "headers": [
+        {
+          "id": "pair_ct4",
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": ""
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"modalidadId\": 1,\n  \"valor\": 12.5\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}",
+        "disabled": false
+      },
+      "metaSortKey": -599,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "fld_admin",
+      "type": "request_group",
+      "parentId": "wrk_sportster",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "5 Con JWT (ROLE_ADMIN)",
+      "description": "Usa token de admin@sportster.com. Crear deporte requiere cuerpo válido con modalidadesIniciales.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -500
+    },
+    {
+      "_id": "req_admin_users",
+      "type": "Request",
+      "parentId": "fld_admin",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "GET /api/v1/admin/users",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/admin/users",
+      "headers": [],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}",
+        "disabled": false
+      },
+      "metaSortKey": -500,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    },
+    {
+      "_id": "req_deporte_post",
+      "type": "Request",
+      "parentId": "fld_admin",
+      "modified": 1740000000000,
+      "created": 1740000000000,
+      "name": "POST /api/v1/deportes (admin)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/deportes",
+      "headers": [
+        {
+          "id": "pair_ct5",
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": ""
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nombre\": \"Deporte Insomnia\",\n  \"imagenUrl\": null,\n  \"modalidadesIniciales\": [\n    { \"nombre\": \"Modalidad 1\", \"unidad\": \"s\" },\n    { \"nombre\": \"Modalidad 2\", \"unidad\": \"m\" }\n  ]\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}",
+        "disabled": false
+      },
+      "metaSortKey": -499,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true
+    }
+  ]
+}

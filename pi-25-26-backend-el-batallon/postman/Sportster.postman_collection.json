@@ -1,0 +1,371 @@
+{
+  "info": {
+    "_postman_id": "c7b4f0a1-9e2d-4c1a-8f5b-sportster01",
+    "name": "Sportster API",
+    "description": "Colección Postman v2.1 para el backend Sportster.\n\n**Importar:** Postman → Import → `Sportster.postman_collection.json`.\n\n**Entornos (opcional):** Importa `Sportster-Local` o `Sportster-Render` y selecciónalo. Solo traen `baseUrl` e ids; el JWT se guarda en la variable de **colección** `token`.\n\n**Token:** Ejecuta POST login user o admin; Tests guarda `token` en la colección. Luego Usuario / Admin.\n\n**Orden:** Raíz → Público → Auth → Usuario / Admin.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "idDeporte", "value": "1" },
+    { "key": "idModalidad", "value": "1" },
+    { "key": "idMarca", "value": "1" },
+    { "key": "idUsuario", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Raíz y diagnóstico",
+      "item": [
+        {
+          "name": "GET /",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/",
+            "description": "Health / raíz (público)."
+          },
+          "response": []
+        },
+        {
+          "name": "OPTIONS /api/v1/deportes (CORS preflight)",
+          "request": {
+            "method": "OPTIONS",
+            "header": [
+              { "key": "Origin", "value": "http://localhost:5173" },
+              { "key": "Access-Control-Request-Method", "value": "GET" }
+            ],
+            "url": "{{baseUrl}}/api/v1/deportes",
+            "description": "Simula preflight del navegador (Vite en 5173)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Público (sin JWT)",
+      "item": [
+        {
+          "name": "GET /api/v1/deportes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/deportes",
+            "description": "Listado de deportes (misma ruta que el Home del front)."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/deportes?todos=true",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/deportes?todos=true",
+            "description": "Sin admin, `todos` no muestra ocultos; sirve para probar query."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/deportes/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/deportes/{{idDeporte}}",
+            "description": "Detalle deporte. Ajusta variable idDeporte."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/modalidades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/modalidades",
+            "description": "Listado de modalidades."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/modalidades/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/modalidades/{{idModalidad}}",
+            "description": "Detalle modalidad."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/modalidades/deporte/:idDeporte",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/modalidades/deporte/{{idDeporte}}",
+            "description": "Modalidades por deporte."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/modalidades/deporte/:idDeporte?todos=true",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/modalidades/deporte/{{idDeporte}}?todos=true",
+            "description": "Con admin JWT devuelve también modalidades de deportes ocultos."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/marcas/ranking",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/marcas/ranking?modalidadId={{idModalidad}}",
+            "description": "Ranking por modalidad (modalidadId obligatorio)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST /api/v1/auth/login (user demo)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  try {",
+                  "    var j = pm.response.json();",
+                  "    if (j && j.token) {",
+                  "      pm.collectionVariables.set('token', j.token);",
+                  "      console.log('Token guardado en variable de colección token');",
+                  "    }",
+                  "  } catch (e) { console.warn(e); }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@sportster.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/login",
+            "description": "Usuario seed ROLE_USER. Guarda JWT en variable `token` de la colección."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/auth/login (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  try {",
+                  "    var j = pm.response.json();",
+                  "    if (j && j.token) pm.collectionVariables.set('token', j.token);",
+                  "  } catch (e) {}",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@sportster.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/login",
+            "description": "Admin seed. Sobrescribe `token` para pruebas ROLE_ADMIN."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/auth/register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman User\",\n  \"email\": \"postman.user@example.com\",\n  \"phone\": \"600123456\",\n  \"password\": \"123456\",\n  \"confirmPassword\": \"123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/register",
+            "description": "Cambia el email si ya existe (400)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Usuario (JWT)",
+      "auth": {
+        "type": "bearer",
+        "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+      },
+      "item": [
+        {
+          "name": "GET /api/v1/perfil",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/perfil",
+            "description": "Perfil + mejores marcas. Ejecuta antes Login user."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/marcas",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"modalidadId\": 1,\n  \"valor\": 11.5\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/marcas",
+            "description": "Registrar marca. Ajusta modalidadId según tu BD."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /api/v1/marcas/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/marcas/{{idMarca}}",
+            "description": "Eliminar propia marca. Ajusta idMarca (403 si no es tuya)."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /api/v1/perfil (eliminar cuenta)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/perfil",
+            "description": "Borra el usuario autenticado. ¡Cuidado en BD real!"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin (JWT ROLE_ADMIN)",
+      "auth": {
+        "type": "bearer",
+        "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+      },
+      "item": [
+        {
+          "name": "GET /api/v1/admin/users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/admin/users",
+            "description": "Listado usuarios. Ejecuta Login admin antes."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /api/v1/admin/users/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/admin/users/{{idUsuario}}",
+            "description": "Eliminar usuario por id (lógica de negocio en servicio)."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/deportes",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Deporte Postman\",\n  \"imagenUrl\": null,\n  \"modalidadesIniciales\": [\n    { \"nombre\": \"Prueba 1\", \"unidad\": \"s\" },\n    { \"nombre\": \"Prueba 2\", \"unidad\": \"kg\" }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/deportes",
+            "description": "Crear deporte + modalidades iniciales."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /api/v1/deportes/:id",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Deporte actualizado\",\n  \"imagenUrl\": null,\n  \"visible\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/deportes/{{idDeporte}}",
+            "description": "Actualizar deporte (nombre, imagen, visible)."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /api/v1/deportes/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/deportes/{{idDeporte}}",
+            "description": "Eliminar deporte (y datos relacionados según servicio)."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/modalidades",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Modalidad Postman\",\n  \"unidad\": \"m\",\n  \"idDeporte\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/modalidades",
+            "description": "Crear modalidad. Cambia idDeporte si no existe."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /api/v1/modalidades/:id",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Modalidad actualizada\",\n  \"unidad\": \"s\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/modalidades/{{idModalidad}}",
+            "description": "Actualizar modalidad."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /api/v1/modalidades/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/modalidades/{{idModalidad}}",
+            "description": "Eliminar modalidad."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

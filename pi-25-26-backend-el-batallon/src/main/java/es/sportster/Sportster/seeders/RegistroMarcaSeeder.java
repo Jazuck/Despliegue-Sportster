@@ -10,9 +10,11 @@ import es.sportster.Sportster.repositories.RegistroMarcaRepository;
 import es.sportster.Sportster.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
+@Order(2)
 public class RegistroMarcaSeeder implements CommandLineRunner {
 
     @Autowired
@@ -39,6 +41,11 @@ public class RegistroMarcaSeeder implements CommandLineRunner {
         User user4 = userRepository.findByEmail("carla@sportster.com");
         User user5 = userRepository.findByEmail("user2@sportster.com");
         User user6 = userRepository.findByEmail("user3@sportster.com");
+
+        if (user1 == null || user2 == null || user3 == null || user4 == null || user5 == null || user6 == null) {
+            System.out.println("RegistroMarcaSeeder: faltan usuarios demo; omitiendo marcas.");
+            return;
+        }
 
         // ─────────────────────────────────────────────
         // MODALIDADES
