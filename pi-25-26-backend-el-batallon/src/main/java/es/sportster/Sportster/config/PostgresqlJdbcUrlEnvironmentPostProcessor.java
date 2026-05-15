@@ -2,6 +2,7 @@ package es.sportster.Sportster.config;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.util.StringUtils;
@@ -12,19 +13,24 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Normaliza URLs JDBC de Postgres (Render, etc.): {@code postgresql://}, falta de {@code //} en {@code jdbc:postgresql:},
- * separa credenciales embebidas en la URL y fuerza {@code sslmode=require} fuera de localhost (Render).
- * <p>
- * Lee {@code SPRING_DATASOURCE_URL} explícitamente: en algunos arranques {@code spring.datasource.url} aún
- * refleja el default de {@code application.properties} antes de enlazar bien el entorno.
+ * Normaliza URLs JDBC de Postgres (Render, etc.), separa credenciales en la URL y ajusta SSL solo
+ * en hostnames públicos {@code *.render.com}. También fija dialecto y desactiva metadata JDBC en
+ * arranque cuando la URL es Postgres remota, para evitar el fallo en cadena de Hibernate si la
+ * primera conexión va lenta o el driver no expone metadata a tiempo.
  */
-public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPostProcessor {
+public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
-    private static final String ENV_URL = "SPRING_DATASOURCE_URL";
+    private static final String ENV_SPRING_URL = "SPRING_DATASOURCE_URL";
+    private static final String ENV_DATABASE_URL = "DATABASE_URL";
     private static final String KEY_URL = "spring.datasource.url";
     private static final String KEY_USER = "spring.datasource.username";
     private static final String KEY_PASS = "spring.datasource.password";
     private static final String PS_NAME = "sportster-postgresql-datasource-fix";
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
@@ -38,26 +44,35 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
         EmbeddedCredentials embedded = extractEmbeddedCredentials(jdbc);
         Map<String, Object> map = new LinkedHashMap<>();
         if (embedded != null) {
-            String url = ensureSslModeForRemotePostgres(embedded.urlWithoutUserInfo());
+            String url = ensureSslModeForRenderPublicHost(embedded.urlWithoutUserInfo());
             map.put(KEY_URL, url);
             map.put(KEY_USER, embedded.username());
             map.put(KEY_PASS, embedded.password());
         } else {
-            String url = ensureSslModeForRemotePostgres(jdbc);
+            String url = ensureSslModeForRenderPublicHost(jdbc);
             if (!url.equals(trimmed)) {
                 map.put(KEY_URL, url);
             }
         }
         if (!map.isEmpty()) {
+            if (shouldHardenHibernateForRemotePostgres(map.get(KEY_URL).toString())) {
+                map.put("spring.jpa.properties.hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+                map.put("spring.jpa.properties.hibernate.boot.allow_jdbc_metadata_access", "false");
+                map.put("spring.jpa.properties.hibernate.orm.database.major_version", "18");
+            }
             environment.getPropertySources().addFirst(new MapPropertySource(PS_NAME, map));
         }
     }
 
     /**
-     * Prioriza la variable de entorno que Render inyecta en el runtime Docker.
+     * Render y otras plataformas suelen exponer {@code DATABASE_URL}; el blueprint usa {@code SPRING_DATASOURCE_URL}.
      */
     static String resolveRawJdbcOrPostgresUrl(ConfigurableEnvironment environment) {
-        String v = environment.getProperty(ENV_URL);
+        String v = environment.getProperty(ENV_SPRING_URL);
+        if (StringUtils.hasText(v)) {
+            return v.trim();
+        }
+        v = environment.getProperty(ENV_DATABASE_URL);
         if (StringUtils.hasText(v)) {
             return v.trim();
         }
@@ -79,9 +94,10 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
     }
 
     /**
-     * Postgres gestionado (Render, etc.) suele exigir TLS; en local no añadimos parámetros.
+     * Solo hostnames públicos {@code *.render.com} suelen necesitar {@code sslmode=require} en el cliente.
+     * Las URLs internas del blueprint (host tipo {@code dpg-…} sin dominio render) suelen fallar si se fuerza SSL.
      */
-    static String ensureSslModeForRemotePostgres(String jdbcUrlWithoutUser) {
+    static String ensureSslModeForRenderPublicHost(String jdbcUrlWithoutUser) {
         if (jdbcUrlWithoutUser == null || !StringUtils.hasText(jdbcUrlWithoutUser)) {
             return jdbcUrlWithoutUser;
         }
@@ -90,6 +106,9 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
             return jdbcUrlWithoutUser;
         }
         if (lower.contains("localhost") || lower.contains("127.0.0.1")) {
+            return jdbcUrlWithoutUser;
+        }
+        if (!hostContainsRenderPublicDomain(jdbcUrlWithoutUser)) {
             return jdbcUrlWithoutUser;
         }
         if (lower.contains("sslmode=")) {
@@ -108,6 +127,44 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
             return base + "?sslmode=require";
         }
         return base + "?" + query + "&sslmode=require";
+    }
+
+    static boolean hostContainsRenderPublicDomain(String jdbcUrlWithoutUser) {
+        String host = extractHostFromJdbcPostgresql(jdbcUrlWithoutUser);
+        return host != null && host.toLowerCase().contains("render.com");
+    }
+
+    static boolean shouldHardenHibernateForRemotePostgres(String jdbcUrlWithoutUser) {
+        if (jdbcUrlWithoutUser == null || !StringUtils.hasText(jdbcUrlWithoutUser)) {
+            return false;
+        }
+        String lower = jdbcUrlWithoutUser.toLowerCase();
+        return lower.startsWith("jdbc:postgresql://")
+                && !lower.contains("localhost")
+                && !lower.contains("127.0.0.1");
+    }
+
+    /** Host:puerto o host sin puerto, sin path ni query. */
+    static String extractHostFromJdbcPostgresql(String jdbcUrl) {
+        final String prefix = "jdbc:postgresql://";
+        if (jdbcUrl == null || !jdbcUrl.startsWith(prefix)) {
+            return null;
+        }
+        String rest = jdbcUrl.substring(prefix.length());
+        int at = rest.indexOf('@');
+        if (at >= 0) {
+            rest = rest.substring(at + 1);
+        }
+        int slash = rest.indexOf('/');
+        int q = rest.indexOf('?');
+        int end = rest.length();
+        if (slash >= 0) {
+            end = Math.min(end, slash);
+        }
+        if (q >= 0) {
+            end = Math.min(end, q);
+        }
+        return rest.substring(0, end);
     }
 
     /**
