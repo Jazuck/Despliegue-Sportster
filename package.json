@@ -1,0 +1,10 @@
+{
+  "name": "despliegue-sportster",
+  "private": true,
+  "description": "Metapaquete para Render: delega en el frontend Vite. Deja Root Directory vacío en el servicio web.",
+  "scripts": {
+    "postinstall": "yarn --cwd pi-25-26-frontend-el-batallon install && yarn --cwd pi-25-26-frontend-el-batallon build",
+    "build": "yarn --cwd pi-25-26-frontend-el-batallon build",
+    "start": "yarn --cwd pi-25-26-frontend-el-batallon start"
+  }
+}

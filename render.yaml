@@ -1,0 +1,9 @@
+# Blueprint Render: crea/actualiza servicio con la raíz del repo (no la carpeta backend).
+# Si ya tienes un Web Service manual, en el panel: Root Directory = vacío, Build = yarn, Start = yarn start
+services:
+  - type: web
+    name: despliegue-sportster
+    runtime: node
+    rootDir: .
+    buildCommand: yarn
+    startCommand: yarn start
