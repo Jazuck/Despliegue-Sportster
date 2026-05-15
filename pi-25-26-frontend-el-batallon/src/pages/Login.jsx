@@ -57,6 +57,7 @@ function Login() {
 
       navigate('/')
     } catch (err) {
+      console.error('[Sportster] login', err)
       const raw = err?.message || ''
       const { fields, general } = parseFieldErrorsFromApi(raw)
       const next = emptyFieldErrors()
@@ -68,6 +69,8 @@ function Login() {
         } else {
           setFormError(general)
         }
+      } else if (!next.email && !next.password && raw) {
+        setFormError(raw)
       }
       setFieldErrors(next)
     } finally {

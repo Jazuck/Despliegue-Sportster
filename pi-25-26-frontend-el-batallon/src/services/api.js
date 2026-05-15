@@ -1,6 +1,12 @@
 const API_ORIGIN = (import.meta.env.VITE_API_ORIGIN || 'http://localhost:8080').replace(/\/$/, '')
 const BASE_URL = `${API_ORIGIN}/api/v1`
 
+if (import.meta.env.PROD && (!import.meta.env.VITE_API_ORIGIN || String(import.meta.env.VITE_API_ORIGIN).trim() === '')) {
+  console.warn(
+    '[Sportster] Falta VITE_API_ORIGIN en el build. Añádela en Render (Environment) antes del build, o en .env.production.',
+  )
+}
+
 // Guarda y recupera el token JWT
 export const getToken = () => localStorage.getItem('sportster-token')
 export const setToken = (token) => localStorage.setItem('sportster-token', token)
@@ -33,11 +39,28 @@ async function request(endpoint, options = {}) {
     return null
   }
 
-  const contentType = response.headers.get('content-type')
-  if (contentType && contentType.includes('application/json')) {
-    return response.json()
+  const contentType = response.headers.get('content-type') || ''
+  const rawText = await response.text()
+
+  if (contentType.includes('application/json')) {
+    const trimmed = rawText.trim()
+    if (!trimmed) return null
+    try {
+      return JSON.parse(trimmed)
+    } catch {
+      throw new Error(
+        'El servidor respondió JSON inválido. ¿La URL del API apunta al backend (Spring) y no al front?',
+      )
+    }
   }
-  return response.text()
+
+  if (rawText.trimStart().startsWith('<') || rawText.includes('<!DOCTYPE')) {
+    throw new Error(
+      'El servidor devolvió HTML en lugar de datos (suele pasar si el API no existe o la URL es la del front). Revisa VITE_API_ORIGIN.',
+    )
+  }
+
+  return rawText
 }
 
 // ── Auth ─────────────────────────────────────────────────────────

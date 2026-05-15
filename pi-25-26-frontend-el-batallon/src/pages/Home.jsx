@@ -36,7 +36,13 @@ function Home() {
         setDeportes(Array.isArray(data) ? data : [])
         // setIdsImagenRota(new Set())
       })
-      .catch(() => { if (activo) setError('No se pudieron cargar los deportes.') })
+      .catch((err) => {
+        if (activo) {
+          const msg = err instanceof Error ? err.message : String(err)
+          console.error('[Sportster] deportes:', msg)
+          setError(msg || 'No se pudieron cargar los deportes.')
+        }
+      })
       .finally(() => { if (activo) setCargando(false) })
     return () => { activo = false }
   }, [])
@@ -52,7 +58,10 @@ function Home() {
           if (!activo) return
           setDeportes(Array.isArray(data) ? data : [])
         })
-        .catch(() => {})
+        .catch((err) => {
+          if (!activo) return
+          console.error('[Sportster] deportes (visibility):', err)
+        })
     }
     document.addEventListener('visibilitychange', onVis)
     return () => {
@@ -119,9 +128,15 @@ function Home() {
         {cargando && <p style={{ textAlign: 'center' }}>Cargando deportes...</p>}
         {error    && <p style={{ textAlign: 'center', color: 'var(--error)' }}>{error}</p>}
 
-        {!cargando && deportesFiltrados.length === 0 && (
+        {!cargando && !error && deportesFiltrados.length === 0 && deportesVisibles.length > 0 && (
           <p style={{ textAlign: 'center', color: 'var(--muted)', marginTop: '2rem' }}>
-            No se encontraron deportes que coincidan con "{searchQuery}".
+            No se encontraron deportes que coincidan con «{searchQuery}».
+          </p>
+        )}
+
+        {!cargando && !error && deportesVisibles.length === 0 && (
+          <p style={{ textAlign: 'center', color: 'var(--muted)', marginTop: '2rem' }}>
+            No hay deportes en el catálogo (o aún no están visibles). Si acabas de desplegar, revisa que la base de datos tenga datos.
           </p>
         )}
 
