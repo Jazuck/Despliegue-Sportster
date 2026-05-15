@@ -1,9 +1,8 @@
-# Web con raíz en backend: el package.json de esa carpeta delega en el frontend Vite.
-# El build debe inicializar el submódulo del backend (Render no lo hace solo).
+# Web con raíz en backend: package.json puente delega en el frontend Vite.
 services:
   - type: web
     name: despliegue-sportster
     runtime: node
     rootDir: pi-25-26-backend-el-batallon
-    buildCommand: git -C .. submodule update --init --recursive && yarn
+    buildCommand: yarn
     startCommand: yarn start

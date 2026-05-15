@@ -1,0 +1,10 @@
+{
+  "name": "sportster-render-bridge",
+  "private": true,
+  "description": "Puente Render (raíz backend): build del front y arranque con serve (estático), no vite preview. El API es Spring Boot en otro servicio Java.",
+  "scripts": {
+    "postinstall": "yarn --cwd ../pi-25-26-frontend-el-batallon install && yarn --cwd ../pi-25-26-frontend-el-batallon build",
+    "build": "yarn --cwd ../pi-25-26-frontend-el-batallon build",
+    "start": "yarn --cwd ../pi-25-26-frontend-el-batallon start"
+  }
+}

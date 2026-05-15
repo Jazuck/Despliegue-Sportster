@@ -1,7 +1,6 @@
 # API Spring Boot — raíz del monorepo Jazuck/Despliegue-Sportster.
 # Render: Root Directory VACÍO, Dockerfile path "Dockerfile", runtime Docker.
-# Requiere que "Syncing Git submodules" rellene pi-25-26-backend-el-batallon
-# (GitHub con acceso al repo SomosDeWeb, o submódulo público).
+# Código en pi-25-26-backend-el-batallon/ dentro del mismo repo (sin submódulo).
 
 FROM eclipse-temurin:21-jdk-jammy AS build
 WORKDIR /app
