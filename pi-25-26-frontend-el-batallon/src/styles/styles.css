@@ -1,0 +1,1036 @@
+/* ══════════════════════════════════════════════════════════════════
+   styles.css — Estilos globales de Sportster
+   Importa también: forms.css, marcas.css
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ══ TOKENS — LIGHT ══════════════════════════════════════════════ */
+:root {
+  /* Paleta */
+  --dark: #1a0e0e;
+  --maroon: #5c2d2d;
+  --gold: #7a6235;
+  --gold-btn: #8b6f3a;
+  --bg: #f2efe9;
+  --surface: #ffffff;
+  --border: #ddd8cc;
+  --text: #2a1f1f;
+  --muted: #7a7065;
+  --error: #c0392b;
+  --success: #2e7d5e;
+  --input-bg: #f2efe9;
+  --card-bg: #ffffff;
+  --card-shadow: 0 2px 16px rgba(90, 50, 30, .07);
+
+  /* Colores semánticos (compatibilidad con variables antiguas) */
+  --boton-primario: #8B6F47;
+  --boton-primario-hover: #6F5738;
+  --boton-secundario: transparent;
+  --fondo-pagina: #F5F5F5;
+  --fondo-header: #FFFFFF;
+  --fondo-card: #FFFFFF;
+  --fondo-footer: #8B6F47;
+  --texto-principal: #333333;
+  --texto-secundario: #666666;
+  --texto-blanco: #FFFFFF;
+  --texto-boton: #8B6F47;
+
+  /* Banner (opaco: no se transparenta con el fondo de la página) */
+  --banner-gradiente-inicio: rgb(173, 216, 230);
+  --banner-gradiente-fin: rgb(255, 182, 193);
+  --banner-icono-deporte: #bcd8e2;
+
+  /* Sombras */
+  --sombra-small: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --sombra-medium: 0 8px 16px rgba(0, 0, 0, 0.15);
+  --sombra-logo: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ══ TOKENS — DARK ════════════════════════════════════════════════ */
+:root[data-theme="dark"],
+[data-theme="dark"] {
+  --gold-btn: #a0823f;
+  --bg: #18130f;
+  --surface: #231a13;
+  --border: #3a2e22;
+  --text: #e8ddd0;
+  --muted: #9e8e7a;
+  --input-bg: #2a1f15;
+  --card-bg: #231a13;
+  --card-shadow: 0 2px 20px rgba(0, 0, 0, .4);
+
+  --boton-primario: #A68968;
+  --boton-primario-hover: #8B6F47;
+  --fondo-pagina: #1a1a1a;
+  --fondo-header: #2d2d2d;
+  --fondo-card: #2d2d2d;
+  --texto-principal: #e0e0e0;
+  --texto-secundario: #b0b0b0;
+  --texto-boton: #A68968;
+
+  --banner-gradiente-inicio: rgb(45, 85, 120);
+  --banner-gradiente-fin: rgb(120, 60, 80);
+  --banner-icono-deporte: #6b7c8f;
+
+  --sombra-small: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --sombra-medium: 0 8px 16px rgba(0, 0, 0, 0.4);
+  --sombra-logo: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Detección automática del tema del sistema */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --gold-btn: #a0823f;
+    --bg: #18130f;
+    --surface: #231a13;
+    --border: #3a2e22;
+    --text: #e8ddd0;
+    --muted: #9e8e7a;
+    --input-bg: #2a1f15;
+    --card-bg: #231a13;
+    --card-shadow: 0 2px 20px rgba(0, 0, 0, .4);
+
+    --boton-primario: #A68968;
+    --boton-primario-hover: #8B6F47;
+    --fondo-pagina: #1a1a1a;
+    --fondo-header: #2d2d2d;
+    --fondo-card: #2d2d2d;
+    --texto-principal: #e0e0e0;
+    --texto-secundario: #b0b0b0;
+    --texto-boton: #A68968;
+
+    --banner-gradiente-inicio: rgb(45, 85, 120);
+    --banner-gradiente-fin: rgb(120, 60, 80);
+    --banner-icono-deporte: #6b7c8f;
+
+    --sombra-small: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --sombra-medium: 0 8px 16px rgba(0, 0, 0, 0.4);
+    --sombra-logo: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* ===================================
+   RESET Y BASE
+   =================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+body {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.045em;
+  color: var(--texto-principal);
+  /* Fondo crema suave, dos tonos difuminados (sin imagen) */
+  background-color: #f2ebe0;
+  background-image:
+    radial-gradient(ellipse 140% 90% at 50% -30%, rgba(255, 252, 246, 0.55), transparent 52%),
+    linear-gradient(155deg, #faf6ef 0%, #ebe3d4 42%, #f4efe6 100%);
+  background-attachment: fixed;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: color 0.3s ease;
+}
+
+/* Tema oscuro: crema oscurecida, mismo espíritu sutil */
+:root[data-theme="dark"] body {
+  background-color: #0f0d0b;
+  background-image:
+    radial-gradient(ellipse 120% 85% at 70% -25%, rgba(74, 62, 48, 0.18), transparent 50%),
+    linear-gradient(155deg, #1b1815 0%, #12100e 45%, #181512 100%);
+  background-attachment: fixed;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body {
+    background-color: #0f0d0b;
+    background-image:
+      radial-gradient(ellipse 120% 85% at 70% -25%, rgba(74, 62, 48, 0.18), transparent 50%),
+      linear-gradient(155deg, #1b1815 0%, #12100e 45%, #181512 100%);
+    background-attachment: fixed;
+  }
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+a,
+a.btn,
+a.btn-primary,
+a.btn-secondary {
+  text-decoration: none;
+}
+
+/* ===================================
+   HEADER Y NAVEGACIÓN
+   =================================== */
+.header {
+  background: var(--surface);
+  box-shadow: none;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background-color 0.3s ease;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 1.5rem;
+  max-width: 2000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+  margin-right: 1rem;
+}
+
+.header-logo-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border: 1.5px solid rgba(139, 111, 71, 0.35);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.header-logo-link:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+  border-color: var(--gold-btn);
+}
+
+.header-logo {
+  width: 28px;
+  height: 28px;
+  display: block;
+  object-fit: cover;
+}
+
+.site-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--texto-principal);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Barra de búsqueda */
+.search-container {
+  display: flex;
+  align-items: center;
+  background: color-mix(in srgb, #ffffff 94%, var(--input-bg) 6%);
+  border: 1.5px solid color-mix(in srgb, var(--border) 88%, var(--gold-btn) 12%);
+  border-radius: 50px;
+  padding: .25rem .5rem;
+  margin-left: 90px;
+  width: 400px;
+  transition: border .2s;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.search-container:focus-within {
+  border-color: var(--gold-btn);
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: .85rem;
+  outline: none;
+  color: var(--text);
+}
+
+.search-input::placeholder {
+  color: #4a4038;
+  opacity: 1;
+}
+
+.search-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: var(--gold-btn);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.search-btn:hover {
+  background: #6b5230;
+}
+
+.search-btn svg {
+  width: 13px;
+  height: 13px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2;
+}
+
+/* Solo visible en vista principal en móvil (≤450px); ver media query */
+.search-container.search-container--home-mobile {
+  display: none;
+}
+
+/* Búsqueda en tema oscuro: interior más claro, placeholder legible */
+:root[data-theme='dark'] .search-container,
+[data-theme='dark'] .search-container {
+  background: color-mix(in srgb, var(--surface) 82%, #ffffff 18%);
+  border-color: color-mix(in srgb, var(--border) 92%, var(--gold-btn) 8%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='dark'] .search-input::placeholder,
+[data-theme='dark'] .search-input::placeholder {
+  color: #b8a998;
+  opacity: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .search-container {
+    background: color-mix(in srgb, var(--surface) 82%, #ffffff 18%);
+    border-color: color-mix(in srgb, var(--border) 92%, var(--gold-btn) 8%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  :root:not([data-theme='light']) .search-input::placeholder {
+    color: #b8a998;
+    opacity: 1;
+  }
+}
+
+/* Botones de auth */
+.auth-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.auth-nav-label--short {
+  display: none;
+}
+
+.auth-profile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  max-width: 220px;
+}
+
+.auth-profile-link__icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.auth-profile-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Toggle de tema */
+.theme-toggle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+
+.theme-toggle:hover {
+  border-color: var(--gold-btn);
+}
+
+.theme-toggle svg {
+  width: 16px;
+  height: 16px;
+  stroke: var(--text);
+}
+
+.theme-toggle:hover svg {
+  stroke: var(--gold-btn);
+}
+
+/* ===================================
+   VOLVER AL INICIO (perfil, marca, ranking)
+   =================================== */
+.page-back-nav {
+  margin: 0 0 0.85rem;
+}
+
+.page-back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: 'Rajdhani', sans-serif;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.4rem 0.65rem;
+  margin: -0.4rem -0.65rem;
+  border-radius: 10px;
+  transition: color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+.page-back-link:hover {
+  color: var(--gold-btn);
+  background: color-mix(in srgb, var(--gold-btn) 8%, transparent);
+}
+
+.page-back-link:focus-visible {
+  outline: 2px solid var(--gold-btn);
+  outline-offset: 3px;
+}
+
+.page-back-link__icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  flex-shrink: 0;
+  display: block;
+}
+
+.page-back-link__text {
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* ===================================
+   BOTONES GLOBALES
+   =================================== */
+.btn {
+  padding: .45rem 1rem;
+  border-radius: 50px;
+  font-size: .82rem;
+  font-weight: 600;
+  letter-spacing: .03em;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+
+.btn:hover {
+  border-color: var(--gold-btn);
+}
+
+.btn-primary {
+  background: var(--gold-btn);
+  border-color: var(--gold-btn);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #6b5230;
+}
+
+.btn-secondary {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.btn-secondary:hover {
+  border-color: var(--gold-btn);
+  color: var(--gold-btn);
+}
+
+/* ===================================
+   BANNER
+   =================================== */
+.banner {
+  background: linear-gradient(180deg,
+      var(--banner-gradiente-inicio) 0%,
+      var(--banner-gradiente-fin) 100%);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s ease;
+}
+
+.banner::before {
+  content: '🏃 🏊 🏋️ ⚽ 🏀 🎾 🏐 🏈 ⛷️ 🚴 🤸 🧗 🏃 🏊 🏋️ ⚽ 🏀 🎾 🏐 🏈 ⛷️ 🚴 🤸 🧗 🏃 🏊 🏋️ ⚽ 🏀 🎾 🏐 🏈 ⛷️ 🚴 🤸 🧗 🏃 🏊 🏋️ ⚽ 🏀 🎾';
+  position: absolute;
+  inset: 0;
+  font-size: 2.5rem;
+  color: var(--banner-icono-deporte);
+  word-wrap: break-word;
+  line-height: 4rem;
+  padding: 2rem;
+  pointer-events: none;
+  overflow: hidden;
+  /* Iconos decorativos: baja opacidad para que no compitan con el logo y el título */
+  opacity: 0.16;
+}
+
+.banner-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo-container {
+  width: 65px;
+  height: 65px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--texto-blanco);
+  box-shadow: var(--sombra-logo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+}
+
+.logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.main-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--texto-blanco);
+  letter-spacing: 0.18em;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ===================================
+   SECCIÓN DE DEPORTES
+   =================================== */
+.sports-section {
+  flex: 1;
+  padding: 3rem 1.5rem;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1280px;
+}
+
+.sports-section--center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sports-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 2rem;
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sports-grid--search {
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sports-grid--search .sport-card {
+  flex: 1 1 100%;
+  max-width: min(500px, 100%);
+}
+
+/* ===================================
+   SPORT CARDS
+   =================================== */
+.sport-card {
+  box-sizing: border-box;
+  /* Tantas tarjetas por fila como quepan (flex + wrap) */
+  flex: 1 1 280px;
+  max-width: min(380px, 100%);
+  min-width: 0;
+  /* Ligera transparencia para dejar entrever el fondo */
+  background: color-mix(in srgb, var(--fondo-card) 90%, transparent);
+  border-radius: 16px;
+  box-shadow: var(--sombra-small);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.sport-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--sombra-medium);
+}
+
+.card-image {
+  height: 250px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.sport-card:hover .card-image img {
+  transform: scale(1.05);
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+.card-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--texto-principal);
+  text-align: center;
+  margin-bottom: 1.25rem;
+  transition: color 0.3s ease;
+}
+
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Botones de tarjeta de deporte: forma suave + sombras interior / exterior delicadas */
+.sport-card .card-actions {
+  gap: 0.75rem;
+}
+
+.sport-card .card-actions .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.62rem 1.5rem;
+  min-height: 2.65rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.035em;
+  border-radius: 999px;
+  border-width: 1px;
+  border-style: solid;
+  transition:
+    background 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.sport-card .card-actions .btn-primary {
+  border-color: color-mix(in srgb, var(--gold-btn) 78%, #1a1208);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 1px 1px rgba(40, 28, 14, 0.06),
+    0 4px 14px rgba(60, 42, 22, 0.12),
+    0 10px 28px rgba(80, 55, 30, 0.08);
+}
+
+.sport-card .card-actions .btn-primary:hover {
+  border-color: color-mix(in srgb, var(--gold-btn) 65%, #1a1208);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 2px 4px rgba(40, 28, 14, 0.08),
+    0 6px 18px rgba(60, 42, 22, 0.14),
+    0 14px 32px rgba(80, 55, 30, 0.1);
+}
+
+.sport-card .card-actions .btn-secondary {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface) 88%, var(--input-bg)) 0%,
+    var(--input-bg) 100%
+  );
+  border-color: color-mix(in srgb, var(--border) 70%, var(--gold-btn));
+  color: var(--text);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+    0 1px 1px rgba(30, 22, 18, 0.04),
+    0 3px 10px rgba(30, 22, 18, 0.06);
+}
+
+.sport-card .card-actions .btn-secondary:hover {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface) 92%, var(--input-bg)) 0%,
+    color-mix(in srgb, var(--input-bg) 85%, var(--gold-btn)) 100%
+  );
+  border-color: color-mix(in srgb, var(--gold-btn) 55%, var(--border));
+  color: var(--gold-btn);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05),
+    0 1px 2px rgba(30, 22, 18, 0.05),
+    0 5px 16px rgba(60, 45, 28, 0.08);
+}
+
+/* ===================================
+   SPORT STRIP (chips de deporte)
+   =================================== */
+.sport-strip {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: .6rem 1rem;
+  overflow-x: auto;
+  transition: background .25s, border-color .25s;
+}
+
+.sport-chip {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: var(--muted);
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: .3rem .85rem;
+  border-radius: 50px;
+  transition: background .15s, color .15s;
+  white-space: nowrap;
+}
+
+.sport-chip.active,
+.sport-chip:hover {
+  background: var(--gold-btn);
+  color: #fff;
+}
+
+/* ===================================
+   FOOTER
+   =================================== */
+.footer {
+  background: var(--fondo-footer);
+  color: var(--texto-blanco);
+  text-align: center;
+  padding: 1.5rem;
+  margin-top: auto;
+}
+
+/* ===================================
+   MEDIA QUERIES
+   =================================== */
+@media (max-width: 1024px) {
+  .sports-grid {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .sport-card {
+    max-width: min(360px, 100%);
+  }
+
+  .sports-grid.sports-grid--search .sport-card {
+    max-width: min(500px, 100%);
+  }
+
+  .card-image {
+    height: 240px;
+  }
+
+  .main-title {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-container {
+    width: 120px;
+    height: 120px;
+  }
+
+  .main-title {
+    font-size: 2.5rem;
+  }
+
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .sports-grid {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .sport-card {
+    flex: 1 1 260px;
+    max-width: min(500px, 100%);
+  }
+
+  .sports-grid.sports-grid--search .sport-card {
+    max-width: min(500px, 100%);
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0.75rem 1rem;
+  }
+
+  .auth-buttons {
+    gap: 0.5rem;
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .theme-toggle {
+    width: 36px;
+    height: 36px;
+  }
+
+  .theme-toggle svg {
+    stroke: var(--boton-primario);
+    fill: none;
+    stroke-width: 1.8;
+  }
+
+  .logo-container {
+    width: 100px;
+    height: 100px;
+  }
+
+  .main-title {
+    font-size: 2rem;
+    letter-spacing: 0.05em;
+  }
+
+  .banner {
+    padding: 2.5rem 1rem 2rem;
+  }
+
+  .sports-section {
+    padding: 2rem 1rem;
+  }
+
+  .card-image {
+    height: 200px;
+  }
+}
+
+/* Modo móvil: ≤450px de ancho (referencia tipo 450×915) */
+@media (max-width: 450px) {
+  .header .search-container {
+    display: none;
+  }
+
+  .search-container.search-container--home-mobile {
+    display: flex;
+    width: calc(100% - 1rem);
+    max-width: 28rem;
+    margin: 0.45rem auto 0;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+  }
+
+  .navbar {
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem;
+    padding: 0.42rem 0.55rem;
+  }
+
+  .navbar-brand {
+    margin-right: 0;
+    gap: 0.32rem;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .site-title {
+    font-size: 1rem;
+    letter-spacing: 0.055em;
+  }
+
+  .header-logo {
+    width: 24px;
+    height: 24px;
+  }
+
+  .header-logo-link {
+    border-width: 1px;
+  }
+
+  .auth-buttons {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.2rem;
+    flex-shrink: 0;
+  }
+
+  .auth-nav-label--long {
+    display: none;
+  }
+
+  .auth-nav-label--short {
+    display: inline;
+  }
+
+  .auth-buttons .btn {
+    padding: 0.28rem 0.38rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.015em;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .auth-profile-link {
+    max-width: 7.5rem;
+    gap: 0.28rem;
+    padding: 0.28rem 0.38rem;
+  }
+
+  .auth-buttons .btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .auth-buttons .auth-profile-link__icon {
+    width: 13px;
+    height: 13px;
+  }
+
+  .theme-toggle {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+  }
+
+  .theme-toggle svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .banner {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: clamp(1.2rem, 4.5vw, 1.75rem) clamp(0.55rem, 3vw, 0.85rem)
+      clamp(1.1rem, 3.5vw, 1.5rem);
+  }
+
+  .logo-container {
+    width: clamp(60px, 17vw, 72px);
+    height: clamp(60px, 17vw, 72px);
+  }
+
+  .main-title {
+    font-size: clamp(1.28rem, 6.5vw, 1.65rem);
+    letter-spacing: 0.06em;
+    max-width: 100%;
+    padding: 0 0.25rem;
+    box-sizing: border-box;
+  }
+
+  .sports-section {
+    padding: 1.35rem 0.65rem 1.75rem;
+  }
+
+  .sports-grid {
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .sport-card .card-content {
+    padding: 1.15rem;
+  }
+
+  .sport-card .card-content h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .sport-card .card-actions .btn {
+    font-size: 0.8rem;
+    min-height: 2.4rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .footer {
+    padding: 1rem 0.65rem;
+    font-size: 0.82rem;
+  }
+}
+
+/* ===================================
+   ACCESIBILIDAD
+   =================================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--boton-primario);
+  outline-offset: 2px;
+}

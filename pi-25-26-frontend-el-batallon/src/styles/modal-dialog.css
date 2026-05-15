@@ -1,0 +1,118 @@
+/* Diálogos modales in-page (alert / confirm) */
+
+.modal-dialog-root {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  font-family: 'Rajdhani', system-ui, sans-serif;
+}
+
+.modal-dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: rgba(26, 14, 14, 0.55);
+  cursor: pointer;
+}
+
+.modal-dialog-panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 26rem;
+  max-height: min(90vh, 900px);
+  overflow-y: auto;
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--sombra-medium);
+  padding: 1.35rem 1.35rem 1.15rem;
+}
+
+.modal-dialog-panel--wide {
+  max-width: 38rem;
+}
+
+.modal-dialog-panel--compact {
+  max-width: 22rem;
+}
+
+.modal-dialog-title {
+  margin: 0 0 0.65rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.modal-dialog-body {
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.modal-dialog-body .modal-dialog-text {
+  margin: 0;
+  color: var(--text);
+}
+
+.modal-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  margin-top: 1.35rem;
+}
+
+.modal-dialog-btn {
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.55rem 1.35rem;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition:
+    background 0.18s,
+    border-color 0.18s,
+    color 0.18s;
+}
+
+.modal-dialog-btn--secondary {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.modal-dialog-btn--secondary:hover {
+  border-color: var(--maroon);
+  color: var(--maroon);
+}
+
+.modal-dialog-btn--primary {
+  background: var(--gold-btn);
+  border-color: var(--gold-btn);
+  color: #fff;
+}
+
+.modal-dialog-btn--primary:hover {
+  background: var(--boton-primario-hover, #6b5230);
+  border-color: var(--boton-primario-hover, #6b5230);
+}
+
+.modal-dialog-btn--primary.modal-dialog-btn--danger {
+  background: var(--error);
+  border-color: var(--error);
+}
+
+.modal-dialog-btn--primary.modal-dialog-btn--danger:hover {
+  filter: brightness(0.92);
+}

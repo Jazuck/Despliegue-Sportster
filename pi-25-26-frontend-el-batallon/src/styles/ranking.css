@@ -1,0 +1,605 @@
+/* ══════════════════════════════════════════════════════════════════
+   ranking.css — Diseño V2: podio + lista
+   ══════════════════════════════════════════════════════════════════ */
+
+.ranking-page {
+  width: 100%;
+}
+
+.ranking-page .page {
+  padding-bottom: 5rem;
+}
+
+/* ── Selector de modalidades: chips con volumen suave; activo mucho más oscuro ── */
+.modality-nav-shell {
+  margin: 0 auto 2.35rem;
+  max-width: min(100%, 52rem);
+  padding: 0.55rem 0.65rem;
+  border-radius: 18px;
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--fondo-card) 88%, var(--gold-btn) 12%) 0%,
+    color-mix(in srgb, var(--bg) 70%, var(--border) 30%) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--border) 70%, var(--gold-btn) 30%);
+  box-shadow:
+    inset 0 2px 5px rgba(26, 14, 14, 0.07),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.45),
+    0 6px 20px rgba(42, 31, 31, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.modality-nav {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.mod-chip {
+  position: relative;
+  padding: 0.45rem 1.05rem;
+  border-radius: 999px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--border) 88%, var(--gold-btn) 12%);
+  color: color-mix(in srgb, var(--text) 58%, var(--muted) 42%);
+  cursor: pointer;
+  white-space: nowrap;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--fondo-card) 91%, var(--border) 9%) 0%,
+    color-mix(in srgb, var(--fondo-card) 76%, var(--border)) 100%
+  );
+  box-shadow:
+    0 1px 3px rgba(26, 14, 14, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.mod-chip:hover:not(.mod-chip--active) {
+  border-color: color-mix(in srgb, var(--gold-btn) 42%, var(--border));
+  color: var(--text);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--fondo-card) 88%, var(--gold-btn) 3%, var(--border) 9%) 0%,
+    color-mix(in srgb, var(--fondo-card) 70%, var(--border)) 100%
+  );
+  box-shadow:
+    0 2px 6px rgba(26, 14, 14, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.mod-chip:active:not(.mod-chip--active) {
+  transform: translateY(1px);
+  box-shadow:
+    0 1px 2px rgba(26, 14, 14, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.mod-chip:focus-visible {
+  outline: 2px solid var(--gold-btn);
+  outline-offset: 2px;
+}
+
+/* Categoría seleccionada: bloque muy oscuro + texto claro frente a chips claros */
+.mod-chip--active {
+  color: #faf7f2;
+  border-color: color-mix(in srgb, var(--gold-btn) 40%, #1a0f0f);
+  background: linear-gradient(
+    180deg,
+    #161010 0%,
+    color-mix(in srgb, var(--maroon) 38%, #0c0808) 42%,
+    color-mix(in srgb, var(--maroon) 48%, #080505) 100%
+  );
+  box-shadow:
+    inset 0 3px 10px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(0, 0, 0, 0.35),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.07),
+    0 0 0 1px rgba(0, 0, 0, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.12);
+  transform: translateY(1px);
+}
+
+.mod-chip--active:hover {
+  color: #fff;
+  border-color: color-mix(in srgb, var(--gold-btn) 52%, #1a0f0f);
+  background: linear-gradient(
+    180deg,
+    #1a1212 0%,
+    color-mix(in srgb, var(--maroon) 42%, #0a0606) 42%,
+    color-mix(in srgb, var(--maroon) 52%, #050303) 100%
+  );
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 3px 12px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(0, 0, 0, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.28),
+    0 1px 2px rgba(0, 0, 0, 0.14);
+}
+
+/* Tema oscuro */
+:root[data-theme='dark'] .modality-nav-shell,
+[data-theme='dark'] .modality-nav-shell {
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--surface) 75%, #000) 0%,
+    color-mix(in srgb, var(--bg) 90%, var(--gold-btn) 10%) 100%
+  );
+  border-color: color-mix(in srgb, var(--border) 80%, var(--gold-btn) 20%);
+  box-shadow:
+    inset 0 3px 10px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 8px 28px rgba(0, 0, 0, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme='dark'] .mod-chip,
+[data-theme='dark'] .mod-chip {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--fondo-card) 78%, var(--input-bg) 22%) 0%,
+    color-mix(in srgb, var(--fondo-card) 58%, var(--input-bg)) 100%
+  );
+  border-color: var(--border);
+  color: color-mix(in srgb, var(--text) 82%, var(--muted) 18%);
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+:root[data-theme='dark'] .mod-chip:hover:not(.mod-chip--active),
+[data-theme='dark'] .mod-chip:hover:not(.mod-chip--active) {
+  border-color: color-mix(in srgb, var(--gold-btn) 45%, var(--border));
+  color: var(--text);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--fondo-card) 74%, var(--gold-btn) 5%, var(--input-bg) 21%) 0%,
+    color-mix(in srgb, var(--fondo-card) 52%, var(--input-bg)) 100%
+  );
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+:root[data-theme='dark'] .mod-chip--active,
+[data-theme='dark'] .mod-chip--active {
+  color: #f7f2ea;
+  border-color: color-mix(in srgb, var(--gold-btn) 48%, #0a0806);
+  background: linear-gradient(
+    180deg,
+    #0a0806 0%,
+    color-mix(in srgb, var(--maroon) 32%, #050403) 50%,
+    #030201 100%
+  );
+  box-shadow:
+    inset 0 3px 14px rgba(0, 0, 0, 0.75),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+    0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme='dark'] .mod-chip--active:hover,
+[data-theme='dark'] .mod-chip--active:hover {
+  color: #fff;
+  border-color: color-mix(in srgb, var(--gold-btn) 58%, #0c0a08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .modality-nav-shell {
+    background: linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--surface) 75%, #000) 0%,
+      color-mix(in srgb, var(--bg) 90%, var(--gold-btn) 10%) 100%
+    );
+    border-color: color-mix(in srgb, var(--border) 80%, var(--gold-btn) 20%);
+    box-shadow:
+      inset 0 3px 10px rgba(0, 0, 0, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 8px 28px rgba(0, 0, 0, 0.35),
+      0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  :root:not([data-theme='light']) .mod-chip {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--fondo-card) 78%, var(--input-bg) 22%) 0%,
+      color-mix(in srgb, var(--fondo-card) 58%, var(--input-bg)) 100%
+    );
+    border-color: var(--border);
+    color: color-mix(in srgb, var(--text) 82%, var(--muted) 18%);
+    box-shadow:
+      0 1px 4px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+
+  :root:not([data-theme='light']) .mod-chip:hover:not(.mod-chip--active) {
+    border-color: color-mix(in srgb, var(--gold-btn) 45%, var(--border));
+    color: var(--text);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--fondo-card) 74%, var(--gold-btn) 5%, var(--input-bg) 21%) 0%,
+      color-mix(in srgb, var(--fondo-card) 52%, var(--input-bg)) 100%
+    );
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  }
+
+  :root:not([data-theme='light']) .mod-chip--active {
+    color: #f7f2ea;
+    border-color: color-mix(in srgb, var(--gold-btn) 48%, #0a0806);
+    background: linear-gradient(
+      180deg,
+      #0a0806 0%,
+      color-mix(in srgb, var(--maroon) 32%, #050403) 50%,
+      #030201 100%
+    );
+    box-shadow:
+      inset 0 3px 14px rgba(0, 0, 0, 0.75),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+      0 0 0 1px rgba(0, 0, 0, 0.5);
+  }
+
+  :root:not([data-theme='light']) .mod-chip--active:hover {
+    color: #fff;
+    border-color: color-mix(in srgb, var(--gold-btn) 58%, #0c0a08);
+  }
+}
+
+/* ── Avatar círculo con iniciales ── */
+.rank-avatar-circle {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+}
+
+.rank-avatar-circle--photo {
+  padding: 0;
+  overflow: hidden;
+  background: var(--fondo-card, #f5f0ea);
+}
+
+.rank-avatar-circle--photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Podio top 3 ── */
+.podium-row {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  align-items: end;
+}
+
+.podium-row--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.podium-row--2 {
+  grid-template-columns: 1fr 1fr;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.podium-row--1 {
+  grid-template-columns: 1fr;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.podium-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem 0.75rem 0.9rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  position: relative;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.15s;
+}
+
+.podium-card:hover {
+  transform: translateY(-2px);
+}
+
+.podium-card--1 {
+  padding-top: 1.5rem;
+  border-color: #F0C040;
+}
+
+.podium-card--me {
+  border-color: var(--gold-btn);
+  background: color-mix(in srgb, var(--gold-btn) 5%, var(--card-bg));
+}
+
+.podium-rank-label {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.podium-card--1 .podium-rank-label {
+  background: #FFF3C4;
+  color: #8A6A00;
+  border: 1px solid #F0C04088;
+}
+.podium-card--2 .podium-rank-label {
+  background: #F0EFF0;
+  color: #555;
+  border: 1px solid #C0C0C088;
+}
+.podium-card--3 .podium-rank-label {
+  background: #F5EDE6;
+  color: #7A4A1A;
+  border: 1px solid #CD7F3288;
+}
+
+/* Avatar podio con badge */
+.podium-av-wrap {
+  position: relative;
+  margin-bottom: 0.6rem;
+}
+
+.podium-badge {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--card-bg);
+}
+
+.podium-badge--1 { background: #F0C040; color: #5A3D00; }
+.podium-badge--2 { background: #C8C8C8; color: #3A3A3A; }
+.podium-badge--3 { background: #CD7F32; color: #fff; }
+
+.podium-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.rank-me-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold-btn);
+  flex-shrink: 0;
+}
+
+.podium-score {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold-btn);
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.podium-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ── Lista resto (puesto 4+) ── */
+.ranking-rest {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.ranking-rest-header {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  gap: 12px;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--border) 30%, var(--card-bg));
+}
+
+.rest-row {
+  display: grid;
+  grid-template-columns: 36px auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.12s;
+}
+
+.rest-row:last-child {
+  border-bottom: none;
+}
+
+.rest-row:hover {
+  background: color-mix(in srgb, var(--border) 20%, var(--card-bg));
+}
+
+.rest-row--me {
+  background: color-mix(in srgb, var(--gold-btn) 6%, var(--card-bg));
+}
+
+.rest-pos {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-align: center;
+}
+
+.rest-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.rest-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rank-me-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: var(--gold-btn);
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.rest-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.rest-score {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold-btn);
+  white-space: nowrap;
+}
+
+/* ── Barra posición propia (inline, no fixed) ── */
+.my-position-bar {
+  margin-top: 1.5rem;
+  padding: 0 1rem 2rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.my-position-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+}
+
+.my-position-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.my-position-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.my-position-pill {
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--gold-btn) 15%, var(--card-bg));
+  color: var(--gold-btn);
+  border: 1px solid color-mix(in srgb, var(--gold-btn) 40%, transparent);
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.my-position-score {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ── Empty state ── */
+.empty-ranking {
+  text-align: center;
+  padding: 4rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 520px) {
+  .podium-row--3 {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.4rem;
+  }
+
+  .podium-card {
+    padding: 1rem 0.4rem 0.75rem;
+  }
+
+  .podium-name {
+    font-size: 0.75rem;
+  }
+
+  .podium-score {
+    font-size: 0.85rem;
+  }
+
+  .podium-date {
+    display: none;
+  }
+
+  .rest-row {
+    padding: 0.65rem 0.85rem;
+  }
+}

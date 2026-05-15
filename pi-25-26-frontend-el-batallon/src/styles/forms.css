@@ -1,0 +1,519 @@
+/* ══════════════════════════════════════════════════════════════════
+   forms.css — Componentes de formulario compartidos
+   Usado en: Login, Register, RegistrarMarca, y cualquier otro form
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ══ Login / Registro ═══════════════════════════════════════════════ */
+.auth-main {
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+.auth-wrap {
+  max-width: 440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.auth-wrap--wide {
+  max-width: 480px;
+}
+
+.auth-card {
+  background: var(--fondo-card);
+  border: 1px solid color-mix(in srgb, var(--border) 85%, var(--gold-btn));
+  border-radius: 20px;
+  box-shadow:
+    var(--card-shadow),
+    0 1px 0 rgba(255, 255, 255, 0.06) inset;
+  overflow: hidden;
+}
+
+.auth-card__accent {
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--gold-btn) 0%,
+    color-mix(in srgb, var(--gold-btn) 55%, var(--maroon)) 100%
+  );
+}
+
+.auth-card__inner {
+  padding: 1.85rem 2rem 2rem;
+}
+
+.auth-card__title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 1.42rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--texto-principal);
+  margin: 0 0 0.4rem;
+}
+
+.auth-card__subtitle {
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin: 0 0 1.65rem;
+  line-height: 1.45;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+/* Campos: fondo más limpio que el beige genérico de .field (login/registro) */
+.auth-form .field select,
+.auth-form .field input[type='text'],
+.auth-form .field input[type='email'],
+.auth-form .field input[type='tel'],
+.auth-form .field input[type='password'] {
+  background: #fff;
+  border-color: color-mix(in srgb, var(--border) 88%, var(--gold-btn));
+  box-shadow: inset 0 1px 2px rgba(26, 14, 14, 0.05);
+}
+
+.auth-form .field select:focus,
+.auth-form .field input:focus {
+  box-shadow:
+    inset 0 1px 2px rgba(26, 14, 14, 0.04),
+    0 0 0 3px rgba(122, 98, 53, 0.13);
+}
+
+.auth-form .field input::placeholder {
+  color: var(--muted);
+  opacity: 0.85;
+}
+
+[data-theme='dark'] .auth-form .field select,
+[data-theme='dark'] .auth-form .field input[type='text'],
+[data-theme='dark'] .auth-form .field input[type='email'],
+[data-theme='dark'] .auth-form .field input[type='tel'],
+[data-theme='dark'] .auth-form .field input[type='password'],
+:root[data-theme='dark'] .auth-form .field select,
+:root[data-theme='dark'] .auth-form .field input[type='text'],
+:root[data-theme='dark'] .auth-form .field input[type='email'],
+:root[data-theme='dark'] .auth-form .field input[type='tel'],
+:root[data-theme='dark'] .auth-form .field input[type='password'] {
+  background: color-mix(in srgb, var(--input-bg) 55%, #0a0806);
+  border-color: var(--border);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.45);
+  color: var(--text);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .auth-form .field select,
+  :root:not([data-theme='light']) .auth-form .field input[type='text'],
+  :root:not([data-theme='light']) .auth-form .field input[type='email'],
+  :root:not([data-theme='light']) .auth-form .field input[type='tel'],
+  :root:not([data-theme='light']) .auth-form .field input[type='password'] {
+    background: color-mix(in srgb, var(--input-bg) 55%, #0a0806);
+    border-color: var(--border);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.45);
+    color: var(--text);
+  }
+}
+
+.auth-form .btn-primary {
+  display: block;
+  width: fit-content;
+  margin: 0.25rem auto 0;
+  padding: 0.65rem 1.75rem;
+  font-size: 0.88rem;
+  letter-spacing: 0.06em;
+}
+
+.auth-error {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--error);
+  text-align: center;
+  margin: -0.25rem 0 0;
+  padding: 0.5rem 0.65rem;
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--error) 28%, transparent);
+}
+
+/* Error por campo (debajo del input, texto rojo) */
+.auth-form .auth-field-error {
+  margin: 0;
+  padding-top: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--error);
+  line-height: 1.35;
+}
+
+.auth-form .field--has-error input,
+.auth-form .field--has-error select,
+.auth-form .field--has-error textarea {
+  border-color: color-mix(in srgb, var(--error) 55%, var(--border));
+}
+
+/* Error general del envío (sin caja, solo texto bajo el formulario) */
+.auth-form-summary-error {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--error);
+  text-align: left;
+  margin: 0 0 0.35rem;
+  line-height: 1.4;
+}
+
+.auth-alt {
+  text-align: center;
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.92rem;
+  color: var(--texto-principal);
+  line-height: 1.55;
+}
+
+.auth-alt-link {
+  display: inline-block;
+  margin-top: 0.15rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  color: var(--maroon);
+  text-decoration: none;
+  border-bottom: 2px solid var(--gold-btn);
+  padding-bottom: 2px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.auth-alt-link:hover {
+  color: var(--gold-btn);
+  border-bottom-color: var(--maroon);
+}
+
+[data-theme='dark'] .auth-alt-link,
+:root[data-theme='dark'] .auth-alt-link {
+  color: #f0d78c;
+  border-bottom-color: var(--gold-btn);
+}
+
+[data-theme='dark'] .auth-alt-link:hover,
+:root[data-theme='dark'] .auth-alt-link:hover {
+  color: #fff;
+  border-bottom-color: #f0d78c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .auth-alt-link {
+    color: #f0d78c;
+    border-bottom-color: var(--gold-btn);
+  }
+
+  :root:not([data-theme='light']) .auth-alt-link:hover {
+    color: #fff;
+    border-bottom-color: #f0d78c;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card__inner {
+    padding: 1.5rem 1.35rem 1.65rem;
+  }
+
+  .auth-card__title {
+    font-size: 1.2rem;
+  }
+}
+
+/* ══ CONTENEDOR DE PÁGINA ═════════════════════════════════════════ */
+.page {
+  max-width: 680px;
+  margin: 2.5rem auto;
+  padding: 0 1.25rem 4rem;
+  flex: 1;
+  width: 100%;
+}
+
+/* ══ TÍTULO DE SECCIÓN ════════════════════════════════════════════ */
+.section-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  transition: color .25s;
+}
+
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(to right, var(--gold-btn), transparent);
+  border-radius: 2px;
+}
+
+/* ══ CARD ═════════════════════════════════════════════════════════ */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem 2rem 1.75rem;
+  box-shadow: var(--card-shadow);
+  transition: background .25s, border-color .25s;
+}
+
+/* ══ GRID DE CAMPOS ═══════════════════════════════════════════════ */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem 1.5rem;
+}
+
+.span-2 { grid-column: span 2; }
+
+/* ══ CAMPO INDIVIDUAL ═════════════════════════════════════════════ */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+.field label {
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color .25s;
+}
+
+.field label .req {
+  color: var(--gold-btn);
+  margin-left: 2px;
+}
+
+/* ══ INPUTS, SELECTS Y TEXTAREAS ══════════════════════════════════ */
+.field select,
+.field input[type="text"],
+.field input[type="email"],
+.field input[type="tel"],
+.field input[type="password"],
+.field input[type="number"],
+.field textarea {
+  width: 100%;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: .92rem;
+  color: var(--text);
+  background: var(--input-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: .6rem .85rem;
+  outline: none;
+  transition: border-color .18s, box-shadow .18s, background .25s, color .25s;
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  min-height: 2.55rem;
+}
+
+.field select:focus,
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--gold-btn);
+  box-shadow: 0 0 0 3px rgba(122, 98, 53, .13);
+}
+
+/* Flecha personalizada para select */
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7065' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .8rem center;
+  padding-right: 2rem;
+}
+
+.field textarea {
+  resize: none;
+  min-height: 72px;
+}
+
+/* ══ ERRORES ══════════════════════════════════════════════════════ */
+.err-msg {
+  font-size: .73rem;
+  color: var(--error);
+  margin-top: .15rem;
+  display: none;
+}
+
+.field.invalid .err-msg { display: block; }
+
+.field.invalid select,
+.field.invalid input,
+.field.invalid textarea {
+  border-color: var(--error);
+}
+
+/* ══ CONTADOR DE CARACTERES ═══════════════════════════════════════ */
+.char-count {
+  font-size: .72rem;
+  color: var(--muted);
+  text-align: right;
+  margin-top: .15rem;
+  transition: color .25s;
+}
+
+/* ══ DIVIDER ══════════════════════════════════════════════════════ */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 1.5rem 0;
+  transition: background .25s;
+}
+
+/* ══ ACCIONES DEL FORM ════════════════════════════════════════════ */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .75rem;
+  margin-top: 1.75rem;
+}
+
+.btn-cancel {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: .9rem;
+  padding: .6rem 1.5rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: border-color .18s, color .18s;
+}
+
+.btn-cancel:hover {
+  border-color: var(--maroon);
+  color: var(--maroon);
+}
+
+.btn-submit {
+  background: var(--gold-btn);
+  border: 1.5px solid var(--gold-btn);
+  color: #fff;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: .88rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: .55rem 1.75rem;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background .18s, border-color .18s;
+}
+
+.btn-submit:hover {
+  background: #6b5230;
+  border-color: #6b5230;
+}
+
+.btn-submit:active {
+  background: #5a4425;
+  border-color: #5a4425;
+}
+
+.btn-submit:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* ══ TOAST ════════════════════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--success);
+  color: #fff;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: .88rem;
+  padding: .9rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .2);
+  transform: translateY(120%);
+  opacity: 0;
+  transition: transform .3s cubic-bezier(.34, 1.56, .64, 1), opacity .3s;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ══ RESPONSIVE ═══════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .form-grid  { grid-template-columns: 1fr; }
+  .span-2     { grid-column: span 1; }
+  .card       { padding: 1.25rem; }
+}
+
+@media (max-width: 450px) {
+  main.sports-section.auth-main {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding-left: clamp(0.4rem, 2vw, 0.55rem);
+    padding-right: clamp(0.4rem, 2vw, 0.55rem);
+  }
+
+  .auth-main {
+    padding-top: 0.4rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .auth-wrap {
+    max-width: 100%;
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 100%;
+    border-radius: clamp(12px, 3.2vw, 18px);
+    box-sizing: border-box;
+  }
+
+  .auth-card__inner {
+    padding: clamp(1rem, 3.8vw, 1.35rem) clamp(0.7rem, 3.2vw, 1rem)
+      clamp(1.1rem, 3.8vw, 1.45rem);
+  }
+
+  .auth-card__title {
+    font-size: clamp(1.02rem, 4.5vw, 1.22rem);
+    letter-spacing: 0.07em;
+  }
+
+  .auth-card__subtitle {
+    font-size: clamp(0.76rem, 3vw, 0.85rem);
+    margin-bottom: clamp(0.95rem, 3.2vw, 1.3rem);
+    padding: 0 0.1rem;
+    line-height: 1.4;
+  }
+
+  .auth-form {
+    gap: 0.9rem;
+  }
+}

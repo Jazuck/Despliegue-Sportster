@@ -1,0 +1,657 @@
+/* ══════════════════════════════════════════════════════════════════
+   profile.css — Perfil atleta (usa tokens globales de Sportster)
+   ══════════════════════════════════════════════════════════════════ */
+
+.profile-page {
+  background: var(--fondo-pagina);
+  color: var(--texto-principal);
+  min-height: calc(100vh - 1px);
+  padding-bottom: 2rem;
+}
+
+.profile-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 3rem;
+}
+
+.profile-shell--with-back {
+  min-height: 38vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-state-msg {
+  text-align: center;
+  margin: auto 0;
+  padding: 2rem 0 3rem;
+  color: var(--muted);
+  font-size: 1rem;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.profile-state-msg--error {
+  color: var(--error);
+}
+
+/* ── Cabecera de página ── */
+.profile-page-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-page-header__text {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.14em;
+  color: var(--texto-principal);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.profile-page-header__line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--gold-btn) 0%,
+    color-mix(in srgb, var(--gold-btn) 40%, transparent) 45%,
+    transparent 100%
+  );
+}
+
+/* ── Hero ── */
+.profile-hero {
+  display: grid;
+  grid-template-columns: auto 1fr minmax(160px, 42%);
+  gap: 1.5rem 2rem;
+  align-items: stretch;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.75rem 0 1.75rem 2rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  box-shadow: var(--sombra-small);
+}
+
+.profile-hero__avatar {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 2.35rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--texto-blanco);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--gold-btn) 42%, #fff) 0%,
+    var(--gold-btn) 42%,
+    var(--maroon) 100%
+  );
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.28),
+    var(--sombra-medium);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-hero__avatar--interactive {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+
+.profile-hero__avatar--interactive:hover,
+.profile-hero__avatar--interactive:focus-visible {
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.28),
+    var(--sombra-medium);
+}
+
+.profile-hero__avatar--interactive:focus-visible {
+  outline: 3px solid var(--gold-btn);
+  outline-offset: 3px;
+}
+
+.profile-hero__avatar-img {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+.profile-hero__avatar-initials {
+  position: relative;
+  z-index: 0;
+}
+
+.profile-hero__avatar-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.35rem;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.62);
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  pointer-events: none;
+}
+
+.profile-hero__avatar-overlay-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.profile-hero__avatar-overlay-inner svg {
+  flex-shrink: 0;
+}
+
+.profile-hero__avatar-overlay-text {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  max-width: 5.5rem;
+}
+
+.profile-hero__avatar--interactive:hover .profile-hero__avatar-overlay,
+.profile-hero__avatar--interactive:focus-visible .profile-hero__avatar-overlay {
+  opacity: 1;
+}
+
+.profile-hero__avatar-file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.profile-hero__info {
+  min-width: 0;
+  align-self: center;
+}
+
+.profile-hero__name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(1.75rem, 4vw, 2.35rem);
+  font-weight: 700;
+  color: var(--texto-principal);
+  margin: 0 0 0.5rem;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+.profile-hero__badge {
+  display: inline-block;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--gold-btn);
+  border: 1px solid color-mix(in srgb, var(--gold-btn) 55%, var(--border));
+  border-radius: 999px;
+  padding: 0.28rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.profile-hero__quote {
+  margin: 0;
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  max-width: 28rem;
+}
+
+.profile-hero__quote-icon {
+  flex-shrink: 0;
+  color: var(--gold-btn);
+  margin-top: 0.1rem;
+  opacity: 0.95;
+}
+
+.profile-hero__quote p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--texto-secundario);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.profile-hero__visual {
+  position: relative;
+  align-self: stretch;
+  margin: -1.75rem 0;
+  min-height: 0;
+  border-radius: 0;
+  overflow: hidden;
+  /* Misma base que las cajas; hacia la derecha pasa a tono gris neutro */
+  background: linear-gradient(
+    90deg,
+    var(--input-bg) 0%,
+    color-mix(in srgb, var(--muted) 28%, var(--input-bg)) 42%,
+    color-mix(in srgb, var(--muted) 55%, var(--bg)) 100%
+  );
+}
+
+.profile-hero__visual img {
+  display: block;
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  object-fit: cover;
+  object-position: 88% center;
+  filter: grayscale(1) contrast(1.08);
+}
+
+.profile-hero__visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* Funde el texto con el color de caja; deja ver la foto hacia la derecha */
+  background: linear-gradient(
+    90deg,
+    var(--input-bg) 0%,
+    color-mix(in srgb, var(--input-bg) 82%, transparent) 26%,
+    color-mix(in srgb, var(--input-bg) 35%, transparent) 48%,
+    transparent 72%
+  );
+}
+
+/* ── Grid dos columnas ── */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+/* Admin: solo columna de datos personales arriba; el panel ocupa el ancho del shell debajo */
+.profile-grid--admin {
+  grid-template-columns: minmax(0, 26rem);
+  margin-bottom: 1.25rem;
+}
+
+.profile-admin-body {
+  margin-bottom: 2rem;
+}
+
+.profile-card--admin-wide {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .profile-hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 1.75rem 1.75rem 0 1.75rem;
+  }
+
+  .profile-hero__avatar {
+    margin: 0 auto;
+  }
+
+  .profile-hero__info {
+    text-align: center;
+  }
+
+  .profile-hero__quote {
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .profile-hero__visual {
+    order: 4;
+    margin: 1.25rem -1.75rem 0;
+    width: calc(100% + 3.5rem);
+    max-width: none;
+    min-height: 220px;
+    justify-self: stretch;
+  }
+
+  .profile-hero__visual img {
+    min-height: 220px;
+    object-position: center;
+  }
+
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Títulos de bloque (icono + texto) ── */
+.profile-block-title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--texto-principal);
+  text-transform: uppercase;
+  margin: 0 0 0.85rem;
+}
+
+.profile-block-title svg {
+  color: var(--gold-btn);
+  flex-shrink: 0;
+}
+
+/* ── Tarjetas ── */
+.profile-card {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.35rem 1.4rem;
+  box-shadow: var(--sombra-small);
+}
+
+.profile-card--records {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* ── Datos personales ── */
+.profile-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.profile-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.profile-info-row__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--gold-btn) 14%, var(--input-bg));
+  border: 1px solid color-mix(in srgb, var(--gold-btn) 32%, var(--border));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-btn);
+  flex-shrink: 0;
+}
+
+.profile-info-row__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.profile-info-row__label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.profile-info-row__value {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--texto-principal);
+}
+
+/* ── Marcas: selector de deporte ── */
+.profile-marcas-toolbar {
+  margin-bottom: 1rem;
+}
+
+.profile-marcas-label {
+  display: block;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.profile-select-wrap {
+  position: relative;
+}
+
+.profile-select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--gold-btn);
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.profile-select {
+  width: 100%;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--texto-principal);
+  background: var(--fondo-card);
+  border: 1.5px solid color-mix(in srgb, var(--gold-btn) 38%, var(--border));
+  border-radius: 12px;
+  padding: 0.72rem 2.65rem 0.72rem 1rem;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.profile-select:hover {
+  border-color: var(--gold-btn);
+  background: color-mix(in srgb, var(--fondo-card) 92%, var(--gold-btn));
+}
+
+.profile-select:focus {
+  outline: none;
+  border-color: var(--gold-btn);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold-btn) 22%, transparent);
+}
+
+/* ── Marcas: filas ── */
+.profile-record-group-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin: 0.75rem 0 0.35rem;
+}
+
+.profile-record-group-title:first-child {
+  margin-top: 0;
+}
+
+.profile-record-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-record-row:last-of-type {
+  border-bottom: none;
+}
+
+.profile-record-row__run {
+  color: var(--gold-btn);
+  flex-shrink: 0;
+  display: flex;
+}
+
+.profile-record-row__name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--texto-principal);
+}
+
+.profile-record-row__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  margin-right: 0.35rem;
+}
+
+.profile-record-row__value {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--gold-btn);
+}
+
+.profile-record-row__date {
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.profile-no-records {
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1.25rem 0.5rem;
+}
+
+.profile-no-records--tight {
+  padding: 0.75rem 0.5rem 0.25rem;
+}
+
+.profile-btn-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--gold-btn);
+  background: transparent;
+  color: var(--gold-btn);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.profile-btn-add:hover {
+  background: color-mix(in srgb, var(--gold-btn) 12%, transparent);
+  color: var(--boton-primario-hover);
+  border-color: var(--boton-primario-hover);
+}
+
+/* ── Eliminar marca ── */
+.profile-btn-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--error);
+  padding: 0.45rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  opacity: 0.75;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.profile-btn-delete:hover {
+  opacity: 1;
+  background: color-mix(in srgb, var(--error) 12%, transparent);
+}
+
+/* ── Eliminar cuenta ── */
+.profile-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.5rem;
+}
+
+.profile-btn-danger-outline {
+  padding: 0.6rem 1.75rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--error);
+  background: transparent;
+  color: var(--error);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s;
+}
+
+.profile-btn-danger-outline:hover {
+  background: var(--error);
+  color: var(--texto-blanco);
+}
+
+/* Estados carga / error */
+.profile-page--state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  padding: 3rem 1.25rem;
+  color: var(--muted);
+}
+
+.profile-page--state.profile-page--error {
+  color: var(--error);
+}

@@ -1,0 +1,177 @@
+/* ══════════════════════════════════════════════════════════════════
+   marcas.css — Estilos específicos de RegistrarMarca
+   Depende de: styles.css, forms.css
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ══ TÍTULO COMPACTO ══════════════════════════════════════════════ */
+/* Variante más pequeña del .section-title para esta página */
+.section-title--sm {
+  font-size: 1rem;
+  letter-spacing: .08em;
+  margin-bottom: 1.25rem;
+}
+
+/* Aviso: admin ve el formulario pero no puede enviar */
+.marca-admin-hint {
+  margin: 0 0 1rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--gold-btn) 12%, var(--input-bg));
+  border: 1px solid var(--border);
+}
+
+/* ══ FECHA DISPLAY ════════════════════════════════════════════════ */
+.fecha-display {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  background: var(--input-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: .6rem .85rem;
+  font-size: .92rem;
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 500;
+  box-sizing: border-box;
+  min-height: 2.55rem;
+  user-select: none;
+  transition: background .25s, border-color .25s, color .25s;
+}
+
+.fecha-display .fecha-texto {
+  flex: 1;
+  text-transform: capitalize;
+}
+
+.fecha-display .fecha-badge {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  background: var(--gold-btn);
+  color: #fff;
+  padding: .15rem .55rem;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+
+/* ══ FILA DE TIEMPO (min/seg/cent) ════════════════════════════════ */
+.tiempo-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: .5rem;
+  align-items: end;
+}
+
+/* ✅ FIX: neutralizar el gap vertical que .field añade cuando está
+   dentro de .tiempo-row, para que el sub-label quede pegado al input */
+.tiempo-row .field {
+  gap: 0;
+}
+
+.tiempo-row .sub-label {
+  font-size: .7rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  margin-bottom: .25rem;
+  transition: color .25s;
+}
+
+.tiempo-row input { text-align: center; }
+
+/* ══ FILA DE DISTANCIA / PESO ═════════════════════════════════════ */
+.marca-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .5rem;
+  align-items: center;
+}
+
+/* ✅ FIX: cuando .field está dentro de .marca-row, eliminar gap
+   para no generar espacio vacío entre label (oculto) e input */
+.marca-row .field {
+  gap: 0;
+}
+
+.marca-unit {
+  font-size: .88rem;
+  font-weight: 700;
+  color: var(--gold-btn);
+  background: var(--input-bg);
+  border: 1.5px solid var(--border);
+  padding: .6rem .9rem;
+  border-radius: 10px;
+  white-space: nowrap;
+  min-width: 52px;
+  text-align: center;
+  letter-spacing: .04em;
+  transition: background .25s, border-color .25s, color .25s;
+}
+
+/* ══ TABS DE MEDIDA (tiempo / distancia / peso) ═══════════════════ */
+.measure-tabs {
+  display: flex;
+  gap: .4rem;
+  background: var(--input-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: .2rem;
+  transition: background .25s, border-color .25s;
+}
+
+.measure-tab {
+  flex: 1;
+  padding: .42rem;
+  border-radius: 8px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: .82rem;
+  font-weight: 600;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--muted);
+  transition: background .15s, color .15s;
+}
+
+.measure-tab.active {
+  background: var(--gold-btn);
+  color: #fff;
+}
+
+/* ══ ZONA DE ENTRADA (evita saltos de layout) ═════════════════════ */
+.marca-input-zone {
+  min-height: 100px;
+  position: relative;
+}
+
+/* ══ PANELES CONDICIONALES ════════════════════════════════════════ */
+/* Cada panel se muestra/oculta según el tab activo */
+.marca-panel {
+  display: none;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+.marca-panel.active {
+  display: flex;
+}
+
+/* Panel animado genérico (para otros usos) */
+.panel {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height .35s ease, opacity .3s ease;
+}
+
+.panel.open {
+  max-height: 200px;
+  opacity: 1;
+}
