@@ -1,9 +1,35 @@
-const API_ORIGIN = (import.meta.env.VITE_API_ORIGIN || 'http://localhost:8080').replace(/\/$/, '')
-const BASE_URL = `${API_ORIGIN}/api/v1`
+/**
+ * Origen del API (solo scheme + host + port). Evita URLs inválidas que rompen fetch()
+ * ("Invalid value"), p. ej. si VITE_API_ORIGIN quedó como el texto "undefined".
+ */
+function resolveApiOrigin() {
+  let raw = import.meta.env.VITE_API_ORIGIN
+  if (raw != null) raw = String(raw).trim()
+  if (!raw || raw === 'undefined' || raw === 'null') {
+    if (import.meta.env.DEV) return 'http://localhost:8080'
+    return null
+  }
 
-if (import.meta.env.PROD && (!import.meta.env.VITE_API_ORIGIN || String(import.meta.env.VITE_API_ORIGIN).trim() === '')) {
+  let candidate = raw.replace(/\/$/, '')
+  if (!/^https?:\/\//i.test(candidate)) {
+    candidate = `https://${candidate}`
+  }
+
+  try {
+    const u = new URL(candidate)
+    if (u.protocol !== 'http:' && u.protocol !== 'https:') return null
+    return u.origin
+  } catch {
+    return null
+  }
+}
+
+const API_ORIGIN = resolveApiOrigin()
+const BASE_URL = API_ORIGIN ? `${API_ORIGIN}/api/v1` : ''
+
+if (import.meta.env.PROD && !API_ORIGIN) {
   console.warn(
-    '[Sportster] Falta VITE_API_ORIGIN en el build. Añádela en Render (Environment) antes del build, o en .env.production.',
+    '[Sportster] VITE_API_ORIGIN vacío o inválido en el build. En Render → Environment: VITE_API_ORIGIN=https://TU-API.onrender.com (sin /api/v1) y redeploy del front.',
   )
 }
 
@@ -23,6 +49,12 @@ async function request(endpoint, options = {}) {
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
     ...options.headers,
+  }
+
+  if (!BASE_URL) {
+    throw new Error(
+      'URL del API no configurada o inválida (VITE_API_ORIGIN). Revisa variables en Render y vuelve a desplegar el front.',
+    )
   }
 
   const response = await fetch(`${BASE_URL}${endpoint}`, {
