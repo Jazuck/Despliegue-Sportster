@@ -1,9 +1,9 @@
-# Blueprint Render: crea/actualiza servicio con la raíz del repo (no la carpeta backend).
-# Si ya tienes un Web Service manual, en el panel: Root Directory = vacío, Build = yarn, Start = yarn start
+# Web con raíz en backend: el package.json de esa carpeta delega en el frontend Vite.
+# El build debe inicializar el submódulo del backend (Render no lo hace solo).
 services:
   - type: web
     name: despliegue-sportster
     runtime: node
-    rootDir: .
-    buildCommand: yarn
+    rootDir: pi-25-26-backend-el-batallon
+    buildCommand: git -C .. submodule update --init --recursive && yarn
     startCommand: yarn start
