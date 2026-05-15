@@ -9,10 +9,13 @@ export const removeToken = () => localStorage.removeItem('sportster-token')
 // Petición base — añade el token automáticamente si existe
 async function request(endpoint, options = {}) {
   const token = getToken()
+  const hasBody =
+    options.body !== undefined && options.body !== null && options.body !== ''
 
+  // No enviar Content-Type en GET/HEAD sin cuerpo: evita preflight CORS innecesario.
   const headers = {
-    'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
     ...options.headers,
   }
 
