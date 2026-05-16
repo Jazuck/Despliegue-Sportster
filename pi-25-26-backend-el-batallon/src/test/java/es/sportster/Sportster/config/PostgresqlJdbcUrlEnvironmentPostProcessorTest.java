@@ -93,4 +93,14 @@ class PostgresqlJdbcUrlEnvironmentPostProcessorTest {
         String u = "jdbc:postgresql://dpg-abc.oregon-postgres.render.com:5432/sportster?sslmode=require";
         assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.hasValidPostgresSslmodeParameter(u)).isTrue();
     }
+
+    @Test
+    void looksLikeDocumentationJdbcTemplate_detectsLiteralHost() {
+        assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.looksLikeDocumentationJdbcTemplate(
+                "jdbc:postgresql://HOST:5432/sportster")).isTrue();
+        assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.looksLikeDocumentationJdbcTemplate(
+                "jdbc:postgresql://dpg-xxx.render.com:5432/sportster")).isTrue();
+        assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.looksLikeDocumentationJdbcTemplate(
+                "jdbc:postgresql://dpg-abc123-a.oregon-postgres.render.com:5432/sportster")).isFalse();
+    }
 }

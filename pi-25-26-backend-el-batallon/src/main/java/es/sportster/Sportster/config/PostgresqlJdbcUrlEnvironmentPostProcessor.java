@@ -59,6 +59,12 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
         }
         String trimmed = raw.trim();
         String jdbc = repairInvalidPostgresSslmodeParameter(normalizeJdbcUrl(trimmed));
+        if (isRenderRuntime() && looksLikeDocumentationJdbcTemplate(jdbc)) {
+            throw new IllegalStateException(
+                    "Render: la URL de Postgres parece una plantilla (host literal HOST, dpg-xxx de ejemplo, etc.). "
+                            + "En el servicio PostgreSQL de Render abre Connections / Info y copia la Internal Database URL "
+                            + "o External Database URL tal cual (host tipo dpg-… y credenciales reales), sin texto de ayuda.");
+        }
 
         EmbeddedCredentials embedded = extractEmbeddedCredentials(jdbc);
         Map<String, Object> map = new LinkedHashMap<>();
@@ -102,6 +108,25 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
         }
         String lower = raw.toLowerCase();
         return lower.contains("localhost") || lower.contains("127.0.0.1");
+    }
+
+    /**
+     * Detecta URLs copiadas de ejemplos (HOST, dpg-xxx) que provocan {@code UnknownHostException: HOST}.
+     */
+    static boolean looksLikeDocumentationJdbcTemplate(String jdbcUrl) {
+        if (jdbcUrl == null || !StringUtils.hasText(jdbcUrl)) {
+            return false;
+        }
+        String lower = jdbcUrl.toLowerCase();
+        if (lower.contains("dpg-xxx")) {
+            return true;
+        }
+        String hostPort = extractHostFromJdbcPostgresql(jdbcUrl);
+        if (hostPort == null) {
+            return false;
+        }
+        String host = hostPort.split(":")[0].trim();
+        return host.equalsIgnoreCase("HOST");
     }
 
     /**
