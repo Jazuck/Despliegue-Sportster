@@ -10,9 +10,9 @@ import es.sportster.Sportster.models.User;
 import es.sportster.Sportster.repositories.ModalidadRepository;
 import es.sportster.Sportster.repositories.RegistroMarcaRepository;
 import es.sportster.Sportster.repositories.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -31,6 +31,7 @@ public class RegistroMarcaService implements IRegistroMarcaService {
     private UserRepository userRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<RegistroMarcaResponse> obtenerRankingsPorModalidad(Integer idModalidad) {
 
         Modalidad modalidad = modalidadRepository.findById(idModalidad)
@@ -39,7 +40,7 @@ public class RegistroMarcaService implements IRegistroMarcaService {
         List<RegistroMarca> registros =
                 registroMarcaRepository.findByModalidad_IdModalidad(idModalidad);
 
-        String unidad = modalidad.getUnidad().toLowerCase();
+        String unidad = modalidad.getUnidad() != null ? modalidad.getUnidad().toLowerCase() : "";
         boolean isTime = unidad.contains("seg") || unidad.contains("min") || unidad.equals("s");
 
         // Agrupamos por usuario y nos quedamos con su mejor marca
@@ -83,6 +84,7 @@ public class RegistroMarcaService implements IRegistroMarcaService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserMarcaResponse> obtenerMejoresMarcasUsuario(String email) {
         User propietario = resolverUsuarioPorEmail(email);
         if (propietario == null) {
@@ -95,7 +97,7 @@ public class RegistroMarcaService implements IRegistroMarcaService {
                 .values().stream()
                 .map(list -> {
                     Modalidad mod = list.get(0).getModalidad();
-                    String unidad = mod.getUnidad().toLowerCase();
+                    String unidad = mod.getUnidad() != null ? mod.getUnidad().toLowerCase() : "";
                     boolean isTime = unidad.contains("seg") || unidad.contains("min") || unidad.equals("s");
                     
                     RegistroMarca best = list.stream()

@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -43,18 +42,6 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    /**
-     * El navegador pide /favicon.ico sin controlador MVC; con matchers “inteligentes”
-     * a veces no aplica permitAll y cae en authenticated() → 403. Ignorar aquí es seguro.
-     */
-    @Bean
-    public WebSecurityCustomizer ignoreWellKnownBrowserPaths() {
-        return (web) -> web.ignoring()
-                .requestMatchers(
-                        new AntPathRequestMatcher("/favicon.ico"),
-                        new AntPathRequestMatcher("/robots.txt"));
-    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -67,6 +54,10 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authz -> authz
                 .requestMatchers(HttpMethod.GET, "/").permitAll()
+                .requestMatchers(
+                        new AntPathRequestMatcher("/favicon.ico"),
+                        new AntPathRequestMatcher("/robots.txt"),
+                        new AntPathRequestMatcher("/error")).permitAll()
                 .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/deportes", "/api/v1/deportes/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/modalidades", "/api/v1/modalidades/**").permitAll()

@@ -6,6 +6,7 @@ import es.sportster.Sportster.models.Role;
 import es.sportster.Sportster.models.User;
 import es.sportster.Sportster.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +28,9 @@ public class ProfileController {
 
     @GetMapping
     public ResponseEntity<ProfileResponse> obtenerPerfil(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         User user = userRepository.findByEmailIgnoreCase(userDetails.getUsername().trim())
                 .orElseGet(() -> userRepository.findByEmail(userDetails.getUsername()));
         
@@ -51,6 +55,9 @@ public class ProfileController {
     }
     @org.springframework.web.bind.annotation.DeleteMapping
     public ResponseEntity<?> eliminarCuenta(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         User user = userRepository.findByEmailIgnoreCase(userDetails.getUsername().trim())
                 .orElseGet(() -> userRepository.findByEmail(userDetails.getUsername()));
         if (user == null) {
