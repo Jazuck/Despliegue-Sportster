@@ -103,4 +103,10 @@ class PostgresqlJdbcUrlEnvironmentPostProcessorTest {
         assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.looksLikeDocumentationJdbcTemplate(
                 "jdbc:postgresql://dpg-abc123-a.oregon-postgres.render.com:5432/sportster")).isFalse();
     }
+
+    @Test
+    void assertRenderPostgresJdbcUrl_noOpWhenNotOnRender() {
+        PostgresqlJdbcUrlEnvironmentPostProcessor.assertRenderPostgresJdbcUrl(
+                "jdbc:postgresql://user:CONTRASEÑA@host:5432/db");
+    }
 }

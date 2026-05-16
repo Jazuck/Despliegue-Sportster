@@ -62,12 +62,7 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
         }
         String trimmed = raw.trim();
         String jdbc = repairInvalidPostgresSslmodeParameter(normalizeJdbcUrl(trimmed));
-        if (isRenderRuntime() && looksLikeDocumentationJdbcTemplate(jdbc)) {
-            throw new IllegalStateException(
-                    "Render: la URL de Postgres parece una plantilla (host literal HOST, dpg-xxx de ejemplo, etc.). "
-                            + "En el servicio PostgreSQL de Render abre Connections / Info y copia la Internal Database URL "
-                            + "o External Database URL tal cual (host tipo dpg-… y credenciales reales), sin texto de ayuda.");
-        }
+        assertRenderPostgresJdbcUrl(jdbc);
 
         EmbeddedCredentials embedded = extractEmbeddedCredentials(jdbc);
         Map<String, Object> map = new LinkedHashMap<>();
@@ -110,6 +105,45 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
         }
         String lower = raw.toLowerCase();
         return lower.contains("localhost") || lower.contains("127.0.0.1");
+    }
+
+    /**
+     * Falla rápido con mensaje claro si en Render la URL lleva marcadores de chat/ejemplo o formato JDBC incorrecto.
+     */
+    static void assertRenderPostgresJdbcUrl(String jdbcUrl) {
+        if (!isRenderRuntime() || jdbcUrl == null || !StringUtils.hasText(jdbcUrl)) {
+            return;
+        }
+        if (!jdbcUrl.startsWith("jdbc:postgresql://")) {
+            throw new IllegalStateException(
+                    "Render: la URL de Postgres debe quedar como jdbc:postgresql://… (con doble barra tras postgresql:). "
+                            + "Revisa SPRING_DATASOURCE_URL; si pegaste jdbc:postgresql:usuario@… sin //, corrígelo.");
+        }
+        if (looksLikeDocumentationJdbcTemplate(jdbcUrl)) {
+            throw new IllegalStateException(
+                    "Render: la URL parece una plantilla (host literal HOST, dpg-xxx de ejemplo, etc.). "
+                            + "Copia la Internal o External Database URL desde el panel del servicio PostgreSQL en Render.");
+        }
+        String lower = jdbcUrl.toLowerCase();
+        if (lower.contains("contraseña")) {
+            throw new IllegalStateException(
+                    "Render: la URL contiene la palabra CONTRASEÑA (texto de ejemplo). Debes pegar la URL exacta del "
+                            + "panel de Postgres (con la contraseña real incrustada en la cadena), no un marcador del chat.");
+        }
+        if (lower.contains("tu_password") || lower.contains("your_password")) {
+            throw new IllegalStateException(
+                    "Render: la URL contiene un marcador de contraseña de ejemplo. Usa la cadena que copias del panel de Postgres.");
+        }
+        if (jdbcUrl.indexOf('\u2026') >= 0 || jdbcUrl.contains("…")) {
+            throw new IllegalStateException(
+                    "Render: la URL contiene puntos suspensivos (…). Copia el host completo (p. ej. dpg-xxxxx-a.REGION-postgres.render.com).");
+        }
+        String hostPort = extractHostFromJdbcPostgresql(jdbcUrl);
+        if (hostPort != null && hostPort.contains("@")) {
+            throw new IllegalStateException(
+                    "Render: el host resuelto contiene '@' (URL mal formada). Formato esperado: "
+                            + "jdbc:postgresql://usuario:clave@host:5432/base o postgresql://… equivalente del panel.");
+        }
     }
 
     /**
