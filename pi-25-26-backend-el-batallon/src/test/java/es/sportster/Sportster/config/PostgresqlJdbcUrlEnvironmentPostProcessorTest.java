@@ -80,4 +80,17 @@ class PostgresqlJdbcUrlEnvironmentPostProcessorTest {
         env.setProperty("SPRING_DATASOURCE_URL", "postgresql://a:b@h/db");
         assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.hasExplicitSpringOrDatabaseUrl(env)).isTrue();
     }
+
+    @Test
+    void repairInvalidSslmode_fixesGluedDuplicateUrlTail() {
+        String in = "jdbc:postgresql://dpg-abc.oregon-postgres.render.com:5432/sportster?sslmode=requirexxx.render.com/sportster?sslmode=require";
+        assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.repairInvalidPostgresSslmodeParameter(in))
+                .isEqualTo("jdbc:postgresql://dpg-abc.oregon-postgres.render.com:5432/sportster?sslmode=require");
+    }
+
+    @Test
+    void hasValidPostgresSslmodeParameter_trueWhenRequire() {
+        String u = "jdbc:postgresql://dpg-abc.oregon-postgres.render.com:5432/sportster?sslmode=require";
+        assertThat(PostgresqlJdbcUrlEnvironmentPostProcessor.hasValidPostgresSslmodeParameter(u)).isTrue();
+    }
 }

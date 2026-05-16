@@ -11,6 +11,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Normaliza URLs JDBC de Postgres (Render, etc.), separa credenciales en la URL y ajusta SSL solo
@@ -26,6 +27,10 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
     private static final String KEY_USER = "spring.datasource.username";
     private static final String KEY_PASS = "spring.datasource.password";
     private static final String PS_NAME = "sportster-postgresql-datasource-fix";
+
+    /** Valores {@code sslmode} reconocidos por el driver de Postgres (no incluir basura pegada al copiar la URL dos veces). */
+    private static final Pattern POSTGRES_SSLMODE_VALUE = Pattern.compile(
+            "(?i)^(disable|allow|prefer|require|verify-ca|verify-full)$");
 
     @Override
     public int getOrder() {
@@ -53,7 +58,7 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
                             + "servicio o define una de esas variables con la connection string del panel de Postgres.");
         }
         String trimmed = raw.trim();
-        String jdbc = normalizeJdbcUrl(trimmed);
+        String jdbc = repairInvalidPostgresSslmodeParameter(normalizeJdbcUrl(trimmed));
 
         EmbeddedCredentials embedded = extractEmbeddedCredentials(jdbc);
         Map<String, Object> map = new LinkedHashMap<>();
@@ -158,6 +163,7 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
         if (jdbcUrlWithoutUser == null || !StringUtils.hasText(jdbcUrlWithoutUser)) {
             return jdbcUrlWithoutUser;
         }
+        jdbcUrlWithoutUser = repairInvalidPostgresSslmodeParameter(jdbcUrlWithoutUser);
         String lower = jdbcUrlWithoutUser.toLowerCase();
         if (!lower.startsWith("jdbc:postgresql://")) {
             return jdbcUrlWithoutUser;
@@ -168,7 +174,7 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
         if (!hostContainsRenderPublicDomain(jdbcUrlWithoutUser)) {
             return jdbcUrlWithoutUser;
         }
-        if (lower.contains("sslmode=")) {
+        if (hasValidPostgresSslmodeParameter(jdbcUrlWithoutUser)) {
             return jdbcUrlWithoutUser;
         }
         int q = jdbcUrlWithoutUser.indexOf('?');
@@ -184,6 +190,68 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
             return base + "?sslmode=require";
         }
         return base + "?" + query + "&sslmode=require";
+    }
+
+    /**
+     * Repara {@code sslmode=require} pegado a otra copia de la URL (error típico al pegar dos veces en el dashboard),
+     * p. ej. {@code sslmode=requirexxx.render.com/sportster?sslmode=require}.
+     */
+    static String repairInvalidPostgresSslmodeParameter(String jdbcUrl) {
+        if (jdbcUrl == null || !StringUtils.hasText(jdbcUrl)) {
+            return jdbcUrl;
+        }
+        String cur = jdbcUrl;
+        for (int i = 0; i < 4; i++) {
+            String next = repairInvalidPostgresSslmodeParameterOnce(cur);
+            if (next.equals(cur)) {
+                return cur;
+            }
+            cur = next;
+        }
+        return cur;
+    }
+
+    static String repairInvalidPostgresSslmodeParameterOnce(String jdbcUrl) {
+        String lower = jdbcUrl.toLowerCase();
+        int sm = lower.indexOf("sslmode=");
+        if (sm < 0) {
+            return jdbcUrl;
+        }
+        int valStart = sm + "sslmode=".length();
+        int valEnd = jdbcUrl.length();
+        int amp = jdbcUrl.indexOf('&', valStart);
+        if (amp >= 0) {
+            valEnd = amp;
+        }
+        String value = jdbcUrl.substring(valStart, valEnd);
+        if (POSTGRES_SSLMODE_VALUE.matcher(value).matches()) {
+            return jdbcUrl;
+        }
+        String before = jdbcUrl.substring(0, sm);
+        String after = jdbcUrl.substring(valEnd);
+        if (value.toLowerCase().startsWith("require")) {
+            return before + "sslmode=require" + after;
+        }
+        // Valor corrupto (p. ej. contiene host o segunda query): fuerza require en hosts Render públicos.
+        if (hostContainsRenderPublicDomain(jdbcUrl) || value.contains("/") || value.toLowerCase().contains("sslmode=")) {
+            return before + "sslmode=require" + after;
+        }
+        return jdbcUrl;
+    }
+
+    static boolean hasValidPostgresSslmodeParameter(String jdbcUrl) {
+        String lower = jdbcUrl.toLowerCase();
+        int sm = lower.indexOf("sslmode=");
+        if (sm < 0) {
+            return false;
+        }
+        int valStart = sm + "sslmode=".length();
+        int valEnd = jdbcUrl.length();
+        int amp = jdbcUrl.indexOf('&', valStart);
+        if (amp >= 0) {
+            valEnd = amp;
+        }
+        return POSTGRES_SSLMODE_VALUE.matcher(jdbcUrl.substring(valStart, valEnd)).matches();
     }
 
     static boolean hostContainsRenderPublicDomain(String jdbcUrlWithoutUser) {
