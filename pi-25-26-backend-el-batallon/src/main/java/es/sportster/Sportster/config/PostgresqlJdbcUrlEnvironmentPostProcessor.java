@@ -80,7 +80,6 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
             if (shouldHardenHibernateForRemotePostgres(map.get(KEY_URL).toString())) {
                 map.put("spring.jpa.properties.hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
                 map.put("spring.jpa.properties.hibernate.boot.allow_jdbc_metadata_access", "false");
-                map.put("spring.jpa.properties.hibernate.orm.database.major_version", "18");
             }
             environment.getPropertySources().addFirst(new MapPropertySource(PS_NAME, map));
         }
