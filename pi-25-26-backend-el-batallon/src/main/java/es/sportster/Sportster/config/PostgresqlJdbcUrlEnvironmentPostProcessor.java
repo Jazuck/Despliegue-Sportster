@@ -15,9 +15,8 @@ import java.util.regex.Pattern;
 
 /**
  * Normaliza URLs JDBC de Postgres (Render, etc.), separa credenciales en la URL y ajusta SSL solo
- * en hostnames públicos {@code *.render.com}. También fija dialecto y desactiva metadata JDBC en
- * arranque cuando la URL es Postgres remota, para evitar el fallo en cadena de Hibernate si la
- * primera conexión va lenta o el driver no expone metadata a tiempo.
+ * en hostnames públicos {@code *.render.com}. Opcionalmente fija el dialecto PostgreSQL cuando la
+ * URL es remota, para arranques con URL no estándar.
  */
 public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
@@ -85,7 +84,6 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
         if (!map.isEmpty()) {
             if (shouldHardenHibernateForRemotePostgres(map.get(KEY_URL).toString())) {
                 map.put("spring.jpa.properties.hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-                map.put("spring.jpa.properties.hibernate.boot.allow_jdbc_metadata_access", "false");
             }
             environment.getPropertySources().addFirst(new MapPropertySource(PS_NAME, map));
         }
