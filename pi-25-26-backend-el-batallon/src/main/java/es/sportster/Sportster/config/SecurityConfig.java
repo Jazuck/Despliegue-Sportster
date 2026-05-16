@@ -12,8 +12,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.*;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -41,6 +43,18 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
+    /**
+     * El navegador pide /favicon.ico sin controlador MVC; con matchers “inteligentes”
+     * a veces no aplica permitAll y cae en authenticated() → 403. Ignorar aquí es seguro.
+     */
+    @Bean
+    public WebSecurityCustomizer ignoreWellKnownBrowserPaths() {
+        return (web) -> web.ignoring()
+                .requestMatchers(
+                        new AntPathRequestMatcher("/favicon.ico"),
+                        new AntPathRequestMatcher("/robots.txt"));
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -56,7 +70,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/deportes", "/api/v1/deportes/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/modalidades", "/api/v1/modalidades/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/marcas/ranking").permitAll()  // ← añade esto
+                .requestMatchers(HttpMethod.GET, "/api/v1/marcas/ranking").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated()
         );
