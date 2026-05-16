@@ -17,7 +17,8 @@ public class RootController {
         return Map.of(
                 "status", "ok",
                 "service", "Sportster API",
-                "deportes", "/api/v1/deportes"
+                "deportes", "/api/v1/deportes",
+                "interfazWeb", "Es otro servicio en Render (Node, carpeta pi-25-26-frontend-el-batallon). Ver render.yaml."
         );
     }
 }

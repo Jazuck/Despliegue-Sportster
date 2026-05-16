@@ -1,15 +1,22 @@
 # Blueprint Render — Sportster (API Spring Boot en Docker + React + Postgres).
 #
-# Uso:
-# 1) Dashboard Render → New → Blueprint → conecta este repo.
-# 2) Si YA tienes una instancia Postgres con datos, borra el bloque `databases` y en el servicio
-#    `sportster-api` quita el envVar `SPRING_DATASOURCE_URL` fromDatabase; añade en el dashboard
-#    la URL interna o externa (postgresql:// o jdbc) + usuario y contraseña del panel de Postgres.
-# 3) Tras el primer deploy, si cambias los `name` de los servicios, actualiza en el dashboard:
-#    - VITE_API_ORIGIN del front = https://<nombre-api>.onrender.com (sin /api/v1)
-#    - APP_CORS_ALLOWED_ORIGINS del API = https://<nombre-web>.onrender.com,http://localhost:5173,...
+# IMPORTANTE: son DOS URLs distintas. Si abres en el navegador la URL del servicio Docker (API),
+# solo verás JSON en / — es normal. La interfaz React es el SEGUNDO servicio web (Node, sportster-web).
 #
-# Nombres por defecto → URLs típicas: https://sportster-api.onrender.com y https://sportster-web.onrender.com
+# Si creaste solo el API a mano (ej. despliegue-sportster-3.onrender.com), el front NO se despliega solo:
+#   Render → New + → Web Service → Runtime Node, rootDir pi-25-26-frontend-el-batallon,
+#   build: yarn install --frozen-lockfile && yarn build, start: yarn start,
+#   variable VITE_API_ORIGIN = https://TU-API.onrender.com (sin /api/v1).
+#   En el API, APP_CORS_ALLOWED_ORIGINS debe incluir la URL https://TU-FRONT.onrender.com
+#
+# Uso blueprint:
+# 1) Dashboard Render → New → Blueprint → conecta este repo.
+# 2) Si YA tienes Postgres, borra `databases` y en sportster-api configura SPRING_DATASOURCE_* a mano.
+# 3) Si cambias los `name` de los servicios, en el dashboard:
+#    - VITE_API_ORIGIN del front = https://<tu-api>.onrender.com (sin /api/v1)
+#    - APP_CORS_ALLOWED_ORIGINS del API = https://<tu-front>.onrender.com,http://localhost:5173,...
+#
+# Nombres por defecto del blueprint: sportster-api + sportster-web (+ sportster-postgres).
 
 databases:
   - name: sportster-postgres
