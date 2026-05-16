@@ -17,6 +17,10 @@ import java.util.regex.Pattern;
  * Normaliza URLs JDBC de Postgres (Render, etc.), separa credenciales en la URL y ajusta SSL solo
  * en hostnames públicos {@code *.render.com}. Opcionalmente fija el dialecto PostgreSQL cuando la
  * URL es remota, para arranques con URL no estándar.
+ * <p>Orden {@code LOWEST_PRECEDENCE}: ejecutar <strong>después</strong> de ConfigData y otros
+ * {@code EnvironmentPostProcessor}, y publicar con {@code addFirst}, para que {@code spring.datasource.url}
+ * en {@code jdbc:postgresql://…} no quede tapada por el valor crudo {@code postgresql://…} (el driver JDBC
+ * no acepta el esquema {@code postgresql:}).
  */
 public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
@@ -33,7 +37,7 @@ public class PostgresqlJdbcUrlEnvironmentPostProcessor implements EnvironmentPos
 
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+        return Ordered.LOWEST_PRECEDENCE;
     }
 
     @Override
