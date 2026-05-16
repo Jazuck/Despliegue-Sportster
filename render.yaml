@@ -42,7 +42,7 @@ services:
           name: sportster-postgres
           property: connectionString
       - key: APP_CORS_ALLOWED_ORIGINS
-        value: "https://sportster-web.onrender.com,http://localhost:5173,http://127.0.0.1:5173"
+        value: "https://sportster-web.onrender.com,https://despliegue-front.onrender.com,http://localhost:5173,http://127.0.0.1:5173"
 
   # --- Frontend (Vite build + serve) ---
   - type: web
